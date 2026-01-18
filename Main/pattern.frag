@@ -1,56 +1,74 @@
-// make this 120 for the mac:
 #version 330 compatibility
 
-// lighting uniform variables -- these can be set once and left alone:
-uniform float   uKa, uKd, uKs;	 // coefficients of each type of lighting -- make sum to 1.0
-uniform vec4    uColor;		 // object color
-uniform vec4    uSpecularColor;	 // light color
-uniform float   uShininess;	 // specular exponent
+// you can set these 4 uniform variables dynamically or hardwire them:
 
-// square-equation uniform variables -- these should be set every time Display( ) is called:
+uniform float	uKa, uKd, uKs;	// coefficients of each type of lighting
+uniform float	uShininess;	// specular exponent
 
-uniform float   uS0, uT0, uD;
+// in Project #1, these have to be set dynamically from glman sliders or keytime animations or by keyboard hits:
+uniform float	uAd, uBd;
+uniform float	uTol;
 
-// in variables from the vertex shader and interpolated in the rasterizer:
+// interpolated from the vertex shader:
+in  vec2  vST;                  // texture coords
+in  vec3  vN;                   // normal vector
+in  vec3  vL;                   // vector from point to light
+in  vec3  vE;                   // vector from point to eye
+in  vec3  vMC;			// model coordinates
 
-in  vec3  vN;		   // normal vector
-in  vec3  vL;		   // vector from point to light
-in  vec3  vE;		   // vector from point to eye
-in  vec2  vST;		   // (s,t) texture coordinates
+// for Mac users:
+//	Leave out the #version line, or use 120
+//	Change the "in" to "varying"
 
+
+const vec3 OBJECTCOLOR          = vec3( 1., 1., 1. );           // color to make the object
+const vec3 ELLIPSECOLOR         = vec3( 1., 0.4, 0. );           // color to make the ellipse
+const vec3 SPECULARCOLOR        = vec3( 1., 1., 1. );
 
 void
 main( )
 {
-	float s = vST.s;
-	float t = vST.t;
+    vec3 myColor = OBJECTCOLOR;
+	vec2 st = vST;
 
-	// determine the color using the square-boundary equations:
+	// blend OBJECTCOLOR and ELLIPSECOLOR by using the ellipse equation to decide how close
+	// 	this fragment is to the ellipse border:
 
-	vec3 myColor = uColor.rgb;
-	if( uS0-uD/2. <= s  &&  s <= uS0+uD/2.  &&  uT0-uD/2. <= t  &&  t <= uT0+uD/2. )
-	{
-		myColor = vec3( 1., 0., 0. );;
-	}
+    int numins = int( st.s / uAd );
+	int numint = int( st.t / uBd );
 
-	// apply the per-fragmewnt lighting to myColor:
+    float sc = (numins + 0.5) * uAd;
+    float tc = (numint + 0.5) * uBd;
 
-	vec3 Normal = normalize(vN);
-	vec3 Light  = normalize(vL);
-	vec3 Eye    = normalize(vE);
+    vec2 center = vec2(sc, tc);
+    vec2 radii  = 0.5 * vec2(uAd, uBd);
 
-	vec3 ambient = uKa * myColor;
+    vec2 diff = st - center;
+    float d = dot(diff * diff, 1.0 / (radii * radii));
 
-	float dd = max( dot(Normal,Light), 0. );       // only do diffuse if the light can see the point
-	vec3 diffuse = uKd * dd * myColor;
+	float t = smoothstep( 1. - uTol, 1. + uTol, d );
 
-	float ss = 0.;
-	if( dot(Normal,Light) > 0. )	      // only do specular if the light can see the point
-	{
-		vec3 ref = normalize(  reflect( -Light, Normal )  );
-		ss = pow( max( dot(Eye,ref),0. ), uShininess );
-	}
-	vec3 specular = uKs * ss * uSpecularColor.rgb;
-	gl_FragColor = vec4( ambient + diffuse + specular,  1. );
+    myColor = mix( ELLIPSECOLOR, OBJECTCOLOR, t );
+
+	// now use myColor in the per-fragment lighting equations:
+
+    vec3 Normal    = normalize(vN);
+    vec3 Light     = normalize(vL);
+    vec3 Eye       = normalize(vE);
+
+    vec3 ambient = uKa * myColor;
+
+    float dd = max( dot(Normal,Light), 0. );       // only do diffuse if the light can see the point
+    vec3 diffuse = uKd * dd * myColor;
+
+    float s = 0.;
+    if( dd > 0. )              // only do specular if the light can see the point
+    {
+            vec3 ref = normalize(  reflect( -Light, Normal )  );
+            float cosphi = dot( Eye, ref );
+            if( cosphi > 0. )
+                    s = pow( max( cosphi, 0. ), uShininess );
+    }
+    vec3 specular = uKs * s * SPECULARCOLOR.rgb;
+    gl_FragColor = vec4( ambient + diffuse + specular,  1. );
 }
-

@@ -54,11 +54,11 @@
 //		6. The transformations to be reset
 //		7. The program to quit
 //
-//	Author:			Joe Graphics
+//	Author:			Adrien Protzel
 
 // title of these windows:
 
-const char *WINDOWTITLE = "OpenGL / GLUT Sample -- Joe Graphics";
+const char *WINDOWTITLE = "OpenGL / GLUT Sample -- Adrien Protzel";
 const char *GLUITITLE   = "User Interface Window";
 
 // what the glui package defines as true and false:
@@ -166,7 +166,7 @@ const float	WHITE[ ] = { 1.,1.,1.,1. };
 
 // for animation:
 
-const int MS_PER_CYCLE = 10000;		// 10000 milliseconds = 10 seconds
+const int MSEC = 10000;		// 10000 milliseconds = 10 seconds
 
 // non-constant global variables:
 
@@ -182,6 +182,11 @@ float	Scale;					// scaling factor
 float	Time;					// used for animation, this has a value between 0. and 1.
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
+
+float Ad = 0.12f;
+float Bd = 0.12f;
+float Tol = 0.06f;
+
 
 int		SphereList;
 
@@ -329,8 +334,8 @@ Animate( )
 	// put animation stuff in here -- change some global variables for Display( ) to find:
 
 	int ms = glutGet(GLUT_ELAPSED_TIME);
-	ms %= MS_PER_CYCLE;							// makes the value of ms between 0 and MS_PER_CYCLE-1
-	Time = (float)ms / (float)MS_PER_CYCLE;		// makes the value of Time between 0. and slightly less than 1.
+	ms %= MSEC;							// makes the value of ms between 0 and MSEC-1
+	Time = (float)ms / (float)MSEC;		// makes the value of Time between 0. and slightly less than 1.
 
 	// for example, if you wanted to spin an object in Display( ), you might call: glRotatef( 360.f*Time,   0., 1., 0. );
 
@@ -417,12 +422,21 @@ Display( )
 
 	// set the uniform variables that will change over time:
 
-	NowS0 = 0.5f;
-	NowT0 = 0.5f;
-	NowD  = 0.2f + 0.1f*sinf(2.f*F_PI*Time);
-	Pattern.SetUniformVariable( (char *)"uS0", NowS0 );
-	Pattern.SetUniformVariable( (char *)"uT0", NowT0 );
-	Pattern.SetUniformVariable( (char *)"uD" , NowD  );
+	//int msec = glutGet(GLUT_ELAPSED_TIME) % MSEC;
+	//float nowTime = (float)msec / 1000.f;
+
+	//Pattern.SetUniformVariable("uAd", kAd.GetValue(nowTime));
+	//Pattern.SetUniformVariable("uBd", 0.15f);
+	//Pattern.SetUniformVariable("uTol", 0.08f);
+
+	//float Ad = 0.15f + 0.05f * sinf(2.f * F_PI * Time);   // ellipse size in s
+	//float Bd = 0.20f + 0.05f * cosf(2.f * F_PI * Time);   // ellipse size in t
+	//float Tol = 0.10f + 0.05f * sinf(4.f * F_PI * Time);   // smoothness amount
+
+	Pattern.SetUniformVariable("uAd", Ad);
+	Pattern.SetUniformVariable("uBd", Bd);
+	Pattern.SetUniformVariable("uTol", Tol);
+
 
 	glCallList( SphereList );
 
@@ -737,10 +751,16 @@ InitGraphics( )
 	Pattern.SetUniformVariable( (char *)"uKa", 0.1f );
 	Pattern.SetUniformVariable( (char *)"uKd", 0.5f );
 	Pattern.SetUniformVariable( (char *)"uKs", 0.4f );
-	Pattern.SetUniformVariable( (char *)"uColor", 1.f, 0.5f, 0.f, 1.f );
-	Pattern.SetUniformVariable( (char *)"uSpecularColor", 1.f, 1.f, 1.f, 1.f );
+	//Pattern.SetUniformVariable( (char *)"uColor", 1.f, 0.5f, 0.f, 1.f );
+	//Pattern.SetUniformVariable( (char *)"uSpecularColor", 1.f, 1.f, 1.f, 1.f );
 	Pattern.SetUniformVariable( (char *)"uShininess", 12.f );
+
+	Pattern.SetUniformVariable((char*)"uAd", Ad);
+	Pattern.SetUniformVariable((char*)"uBd", Bd);
+	Pattern.SetUniformVariable((char*)"uTol", Tol);
+
 	Pattern.UnUse( );
+
 }
 
 
@@ -810,6 +830,29 @@ Keyboard( unsigned char c, int x, int y )
 		case ESCAPE:
 			DoMainMenu( QUIT );	// will not return here
 			break;				// happy compiler
+
+
+		case 'a': 
+			Ad = 0.05f;
+			break;
+		case 'A': 
+			Ad = 0.35f;
+			break;
+
+		case 'b': 
+			Bd = 0.05f;
+			break;
+		case 'B':  
+			Bd = 0.35f;
+			break;
+
+		case 't':  
+			Tol = 0.02f;
+			break;
+		case 'T':  
+			Tol = 0.15f;
+			break;
+
 
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );
