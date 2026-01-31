@@ -1,65 +1,73 @@
 #version 330 compatibility
 
-// you can set these 4 uniform variables dynamically or hardwire them:
 
-uniform float	uKa, uKd, uKs;	// coefficients of each type of lighting
-uniform float	uShininess;	// specular exponent
+// Lighting
+uniform float uKa, uKd, uKs;
+uniform float uShininess;
 
-// in Project #1, these have to be set dynamically from glman sliders or keytime animations or by keyboard hits:
-uniform float	uAd, uBd;
-uniform float	uTol;
+// Ellipse parameters
+uniform float uAd;         // diameter in s
+uniform float uBd;         // diameter in t
+uniform float uTol;        // blend width
+
+// Noise
+uniform float uNoiseAmp;   // amplitude
+uniform float uNoiseFreq;  // frequency (scales the lookup coords)
+uniform sampler3D Noise3;
+
 
 // interpolated from the vertex shader:
 in  vec2  vST;                  // texture coords
 in  vec3  vN;                   // normal vector
 in  vec3  vL;                   // vector from point to light
 in  vec3  vE;                   // vector from point to eye
-in  vec3  vMC;			// model coordinates
-
-// for Mac users:
-//	Leave out the #version line, or use 120
-//	Change the "in" to "varying"
-
+in  vec3  vMC;			        // model coordinates
 
 const vec3 OBJECTCOLOR          = vec3( 1., 1., 1. );           // color to make the object
 const vec3 ELLIPSECOLOR         = vec3( 1., 0.4, 0. );           // color to make the ellipse
 const vec3 SPECULARCOLOR        = vec3( 1., 1., 1. );
 
-void
-main( )
-{
-    vec3 myColor = OBJECTCOLOR;
-	vec2 st = vST;
+void main( ) {
+    vec2 st = vST;
 
-	// blend OBJECTCOLOR and ELLIPSECOLOR by using the ellipse equation to decide how close
-	// 	this fragment is to the ellipse border:
+    float tile_s = floor(st.s / uAd);
+    float tile_t = floor(st.t / uBd);
+    float s_c = (tile_s + 0.5) * uAd;
+    float t_c = (tile_t + 0.5) * uBd;
+    float A_r = 0.5 * uAd;
+    float B_r = 0.5 * uBd;
+    float ds = st.s - s_c;
+    float dt = st.t - t_c;
 
-    int numins = int( st.s / uAd );
-	int numint = int( st.t / uBd );
+    vec3 P  = uNoiseFreq * vMC;
+    vec4 nv = texture(Noise3, P);
 
-    float sc = (numins + 0.5) * uAd;
-    float tc = (numint + 0.5) * uBd;
+    const vec4 w = vec4(1.0, 0.5, 0.25, 0.125);
+    float sumw   = dot(w, vec4(1.0));  
 
-    vec2 center = vec2(sc, tc);
-    vec2 radii  = 0.5 * vec2(uAd, uBd);
+    float ns = dot(nv,        w) / sumw; 
+    float nt = dot(nv.abgr,   w) / sumw; // decorrelated
+    ns = (2.0 * ns - 1.0) * uNoiseAmp;
+    nt = (2.0 * nt - 1.0) * uNoiseAmp;
+    ds += ns;
+    dt += nt;
 
-    vec2 diff = st - center;
-    float d = dot(diff * diff, 1.0 / (radii * radii));
+    // Ellipse equation with perturbed (ds, dt):
+    float d = (ds*ds) / (A_r*A_r) + (dt*dt) / (B_r*B_r);
 
-	float t = smoothstep( 1. - uTol, 1. + uTol, d );
+    // Smooth edge and color mix:
+    float blend = smoothstep( 1. - uTol, 1. + uTol, d );
+    vec3  base  = mix( ELLIPSECOLOR, OBJECTCOLOR, blend );
 
-    myColor = mix( ELLIPSECOLOR, OBJECTCOLOR, t );
-
-	// now use myColor in the per-fragment lighting equations:
-
+    // ----- Per-fragment lighting -----
     vec3 Normal    = normalize(vN);
     vec3 Light     = normalize(vL);
     vec3 Eye       = normalize(vE);
 
-    vec3 ambient = uKa * myColor;
+    vec3 ambient = uKa * base;
 
     float dd = max( dot(Normal,Light), 0. );       // only do diffuse if the light can see the point
-    vec3 diffuse = uKd * dd * myColor;
+    vec3 diffuse = uKd * dd * base;
 
     float s = 0.;
     if( dd > 0. )              // only do specular if the light can see the point

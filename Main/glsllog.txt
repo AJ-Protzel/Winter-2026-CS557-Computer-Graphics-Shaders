@@ -1,6 +1,6 @@
 
-ERROR: 0:40: 'results_of_ellipse_equation' : undeclared identifier 
-ERROR: 0:40: '' : compilation terminated 
+ERROR: 0:54: 'nv' : redefinition 
+ERROR: 0:54: '' : compilation terminated 
 ERROR: 2 compilation errors.  No code generated.
 
 

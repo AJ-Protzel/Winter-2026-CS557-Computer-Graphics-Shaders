@@ -183,9 +183,14 @@ float	Time;					// used for animation, this has a value between 0. and 1.
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
 
-float Ad = 0.12f;
-float Bd = 0.12f;
-float Tol = 0.06f;
+float Ad = 0.05f;
+float Bd = 0.05f;
+float Tol = 0.05f;
+
+float NoiseAmp = 0.05f;
+float NoiseFreq = 0.05f;
+GLuint NoiseTex3D = 0;
+GLuint DL;
 
 
 int		SphereList;
@@ -271,7 +276,7 @@ MulArray3(float factor, float a, float b, float c )
 //#include "osucone.cpp"
 //#include "osutorus.cpp"
 //#include "bmptotexture.cpp"
-//#include "loadobjfile.cpp"
+#include "loadobjfile.cpp"
 #include "keytime.cpp"
 #include "glslprogram.cpp"
 
@@ -437,9 +442,15 @@ Display( )
 	Pattern.SetUniformVariable("uBd", Bd);
 	Pattern.SetUniformVariable("uTol", Tol);
 
+	Pattern.SetUniformVariable("uNoiseAmp", NoiseAmp);
+	Pattern.SetUniformVariable("uNoiseFreq", NoiseFreq);
 
-	glCallList( SphereList );
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
+	Pattern.SetUniformVariable((char*)"Noise3", 0);   
 
+	//glCallList( SphereList );
+	glCallList(DL);
 	Pattern.UnUse( );       // Pattern.Use(0);  also works
 
 
@@ -759,7 +770,62 @@ InitGraphics( )
 	Pattern.SetUniformVariable((char*)"uBd", Bd);
 	Pattern.SetUniformVariable((char*)"uTol", Tol);
 
+	Pattern.SetUniformVariable((char*)"uNoiseAmp", NoiseAmp);
+	Pattern.SetUniformVariable((char*)"uNoiseFreq", NoiseFreq);
+
+
 	Pattern.UnUse( );
+
+
+
+
+
+
+
+
+
+
+	// ---- Create a small 32^3 RGBA 3D noise texture (temporary but good enough) ----
+	const int W = 32, H = 32, D = 32;
+	std::vector<unsigned char> data(W * H * D * 4);
+
+	// tiny hash -> 0..255
+	auto h8 = [](int x, int y, int z)->unsigned char {
+		unsigned int n = (unsigned int)(x * 73856093) ^ (unsigned int)(y * 19349663) ^ (unsigned int)(z * 83492791);
+		n ^= (n >> 13); n *= 1274126177u; n ^= (n >> 16);
+		return (unsigned char)(n & 0xFF);
+		};
+
+	// each channel = a lower-frequency octave
+	for (int z = 0; z < D; ++z)
+		for (int y = 0; y < H; ++y)
+			for (int x = 0; x < W; ++x) {
+				const int i = ((z * H + y) * W + x) * 4;
+				data[i + 0] = h8(x, y, z); // octave 0
+				data[i + 1] = h8(x >> 1, y >> 1, z >> 1); // octave 1
+				data[i + 2] = h8(x >> 2, y >> 2, z >> 2); // octave 2
+				data[i + 3] = h8(x >> 3, y >> 3, z >> 3); // octave 3
+			}
+
+	// GL creation / upload:
+	glGenTextures(1, &NoiseTex3D);
+	glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+
+	// upload RGBA8 volume:
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, W, H, D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+
+	// (Optional) verify upload worked:
+	GLint w = 0, h = 0, d = 0;
+	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_WIDTH, &w);
+	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_HEIGHT, &h);
+	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_DEPTH, &d);
+	printf("3D noise uploaded: %dx%dx%d\n", w, h, d);
+
 
 }
 
@@ -793,6 +859,16 @@ InitLists( )
 			Axes( 1.5 );
 		glLineWidth( 1. );
 	glEndList( );
+
+	// do this in InitLists( ):
+	DL = glGenLists(1);
+	glNewList(DL, GL_COMPILE);
+	glPushMatrix();
+	glScalef(0.1f, 0.1f, 0.1f);     // scale
+	LoadObjFile("obj_files/spaceship.obj");
+	glPopMatrix();
+	glEndList();
+
 }
 
 
@@ -803,6 +879,13 @@ Keyboard( unsigned char c, int x, int y )
 {
 	if( DebugOn != 0 )
 		fprintf( stderr, "Keyboard: '%c' (0x%0x)\n", c, c );
+	
+
+	const float STEP = 0.01f;
+	const auto clamp = [](float v, float lo, float hi) {
+		return v < lo ? lo : (v > hi ? hi : v);
+	};
+
 
 	switch( c )
 	{
@@ -832,26 +915,20 @@ Keyboard( unsigned char c, int x, int y )
 			break;				// happy compiler
 
 
-		case 'a': 
-			Ad = 0.05f;
-			break;
-		case 'A': 
-			Ad = 0.35f;
-			break;
+		case 'a': Ad = clamp(Ad - STEP, 0.0f, 1.0f); break;
+		case 'A': Ad = clamp(Ad + STEP, 0.0f, 1.0f); break;
 
-		case 'b': 
-			Bd = 0.05f;
-			break;
-		case 'B':  
-			Bd = 0.35f;
-			break;
+		case 'b': Bd = clamp(Bd - STEP, 0.0f, 1.0f); break;
+		case 'B': Bd = clamp(Bd + STEP, 0.0f, 1.0f); break;
 
-		case 't':  
-			Tol = 0.02f;
-			break;
-		case 'T':  
-			Tol = 0.15f;
-			break;
+		case 't': Tol = clamp(Tol - STEP, 0.0f, 1.0f); break;
+		case 'T': Tol = clamp(Tol + STEP, 0.0f, 1.0f); break;
+
+		case 'n': NoiseAmp = clamp(NoiseAmp - STEP, 0.0f, 1.0f); break;
+		case 'N': NoiseAmp = clamp(NoiseAmp + STEP, 0.0f, 1.0f); break;
+
+		case 'm': NoiseFreq = clamp(NoiseFreq - STEP, 0.0f, 1.0f); break;
+		case 'M': NoiseFreq = clamp(NoiseFreq + STEP, 0.0f, 1.0f); break;
 
 
 		default:
