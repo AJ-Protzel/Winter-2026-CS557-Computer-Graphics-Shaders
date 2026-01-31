@@ -295,6 +295,7 @@ GLSLProgram Pattern;
 
 
 // main program:
+
 int
 main( int argc, char *argv[ ] )
 {
@@ -333,12 +334,15 @@ main( int argc, char *argv[ ] )
 
 	return 0;
 }
+
+
 // this is where one would put code that is to be called
 // everytime the glut main loop has nothing to do
 //
 // this is typically where animation parameters are set
 //
 // do not call Display( ) from here -- let glutPostRedisplay( ) do it
+
 void
 Animate( )
 {
@@ -355,7 +359,10 @@ Animate( )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
+
+
 // draw the complete scene:
+
 void
 Display( )
 {
@@ -427,30 +434,54 @@ Display( )
 
 	// draw the box object by calling up its display list:
 
-	Pattern.Use();
+	Pattern.Use( );
+
+	// set the uniform variables that will change over time:
+
+	//int msec = glutGet(GLUT_ELAPSED_TIME) % MSEC;
+	//float nowTime = (float)msec / 1000.f;
+
+	//Pattern.SetUniformVariable("uAd", kAd.GetValue(nowTime));
+	//Pattern.SetUniformVariable("uBd", 0.15f);
+	//Pattern.SetUniformVariable("uTol", 0.08f);
+
+	//float Ad = 0.15f + 0.05f * sinf(2.f * F_PI * Time);   // ellipse size in s
+	//float Bd = 0.20f + 0.05f * cosf(2.f * F_PI * Time);   // ellipse size in t
+	//float Tol = 0.10f + 0.05f * sinf(4.f * F_PI * Time);   // smoothness amount
+
+	//Pattern.SetUniformVariable("uAd", Ad);
+	//Pattern.SetUniformVariable("uBd", Bd);
+	//Pattern.SetUniformVariable("uTol", Tol);
+
+	//Pattern.SetUniformVariable("uNoiseAmp", NoiseAmp);
+	//Pattern.SetUniformVariable("uNoiseFreq", NoiseFreq);
+
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
+	//Pattern.SetUniformVariable((char*)"Noise3", 0);   
+
+	////glCallList( SphereList );
+	//glCallList(DL);
+
+
 
 	Pattern.SetUniformVariable("uKa", 0.15f);
 	Pattern.SetUniformVariable("uKd", 0.65f);
 	Pattern.SetUniformVariable("uKs", 1.00f);
 	Pattern.SetUniformVariable("uShininess", 100.f);
 
+	//Pattern.SetUniformVariable("uA", 0.15f);
+	//Pattern.SetUniformVariable("uP", 0.60f); // frequency
 	Pattern.SetUniformVariable("uA", uA);
-	Pattern.SetUniformVariable("uP", uP);
+	Pattern.SetUniformVariable("uP", uP); // frequency
 
 	Pattern.SetUniformVariable("uLightX", 6.0f);
 	Pattern.SetUniformVariable("uLightY", 10.0f);
 	Pattern.SetUniformVariable("uLightZ", 6.0f);
 
-	Pattern.SetUniformVariable("uNoiseAmp", NoiseAmp);   
-	Pattern.SetUniformVariable("uNoiseFreq", NoiseFreq); 
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
-	Pattern.SetUniformVariable((char*)"Noise3", 0);
-
 	glCallList(CurtainDL);
-	Pattern.UnUse();
 
+	Pattern.UnUse();       // Pattern.Use(0);  also works
 
 
 
@@ -931,17 +962,28 @@ Keyboard( unsigned char c, int x, int y )
 			DoMainMenu( QUIT );	// will not return here
 			break;				// happy compiler
 
-		case 'n': NoiseAmp = clamp(NoiseAmp - STEP, 0.0f, 1.0f); break;
-		case 'N': NoiseAmp = clamp(NoiseAmp + STEP, 0.0f, 1.0f); break;
 
-		case 'm': NoiseFreq = clamp(NoiseFreq - STEP, 0.0f, 1.0f); break;
-		case 'M': NoiseFreq = clamp(NoiseFreq + STEP, 0.0f, 1.0f); break;
+		//case 'a': Ad = clamp(Ad - STEP, 0.0f, 1.0f); break;
+		//case 'A': Ad = clamp(Ad + STEP, 0.0f, 1.0f); break;
+
+		//case 'b': Bd = clamp(Bd - STEP, 0.0f, 1.0f); break;
+		//case 'B': Bd = clamp(Bd + STEP, 0.0f, 1.0f); break;
+
+		//case 't': Tol = clamp(Tol - STEP, 0.0f, 1.0f); break;
+		//case 'T': Tol = clamp(Tol + STEP, 0.0f, 1.0f); break;
+
+		//case 'n': NoiseAmp = clamp(NoiseAmp - STEP, 0.0f, 1.0f); break;
+		//case 'N': NoiseAmp = clamp(NoiseAmp + STEP, 0.0f, 1.0f); break;
+
+		//case 'm': NoiseFreq = clamp(NoiseFreq - STEP, 0.0f, 1.0f); break;
+		//case 'M': NoiseFreq = clamp(NoiseFreq + STEP, 0.0f, 1.0f); break;
 
 		case '1': uA = clamp(uA - STEP, 0.0f, 1.0f); break;
 		case '!': uA = clamp(uA + STEP, 0.0f, 1.0f); break;
 
 		case '2': uP = clamp(uP - STEP, 0.0f, 1.0f); break;
 		case '@': uP = clamp(uP + STEP, 0.0f, 1.0f); break;
+
 
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );
