@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\pattern.frag||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:pattern.frag||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{3A18C8BB-2941-432F-8F8B-BEB51352D229}|Sample.vcxproj|C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\sample.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{3A18C8BB-2941-432F-8F8B-BEB51352D229}|Sample.vcxproj|solutionrelative:sample.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\pattern.frag||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:pattern.frag||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\pattern.vert||{8B382828-6202-11D1-8870-0000F87579D2}",
@@ -22,17 +22,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "sample.cpp",
               "DocumentMoniker": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\sample.cpp",
               "RelativeDocumentMoniker": "sample.cpp",
               "ToolTip": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\sample.cpp",
               "RelativeToolTip": "sample.cpp",
-              "ViewState": "AgIAAK4DAAAAAAAAAAAQwCkFAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAKQBAAAAAAAAAAAIwLMBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-01-10T20:00:53.139Z",
               "IsPinned": true,
@@ -46,20 +46,20 @@
               "RelativeDocumentMoniker": "pattern.vert",
               "ToolTip": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\pattern.vert",
               "RelativeToolTip": "pattern.vert",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAEAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2026-01-16T19:56:26.6Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "pattern.frag",
               "DocumentMoniker": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\pattern.frag",
               "RelativeDocumentMoniker": "pattern.frag",
               "ToolTip": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\pattern.frag",
               "RelativeToolTip": "pattern.frag",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAoAAAAAAAAAAADwvxgAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2026-01-16T19:56:24.315Z",
               "EditorCaption": ""

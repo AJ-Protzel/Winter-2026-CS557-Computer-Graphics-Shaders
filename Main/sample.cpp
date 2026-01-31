@@ -192,8 +192,18 @@ float NoiseFreq = 0.05f;
 GLuint NoiseTex3D = 0;
 GLuint DL;
 
-
 int		SphereList;
+
+float uA = 0.05f; // varied
+float uP = 0.05f; // varied
+float uKa = 0.05f;
+float uKd = 0.05f;
+float uKs = 0.05f;
+//float uShininess = 0.05f;
+float uLightX = 0.05f;
+float uLightY = 0.05f;
+float uLightZ = 0.05f;
+GLuint CurtainDL;
 
 
 // function prototypes:
@@ -272,7 +282,7 @@ MulArray3(float factor, float a, float b, float c )
 
 //#include "setmaterial.cpp"
 //#include "setlight.cpp"
-#include "osusphere.cpp"
+//#include "osusphere.cpp"
 //#include "osucone.cpp"
 //#include "osutorus.cpp"
 //#include "bmptotexture.cpp"
@@ -285,7 +295,6 @@ GLSLProgram Pattern;
 
 
 // main program:
-
 int
 main( int argc, char *argv[ ] )
 {
@@ -324,15 +333,12 @@ main( int argc, char *argv[ ] )
 
 	return 0;
 }
-
-
 // this is where one would put code that is to be called
 // everytime the glut main loop has nothing to do
 //
 // this is typically where animation parameters are set
 //
 // do not call Display( ) from here -- let glutPostRedisplay( ) do it
-
 void
 Animate( )
 {
@@ -349,10 +355,7 @@ Animate( )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
-
-
 // draw the complete scene:
-
 void
 Display( )
 {
@@ -367,7 +370,8 @@ Display( )
 
 	// specify shading to be flat:
 
-	glShadeModel( GL_FLAT );
+	//glShadeModel( GL_FLAT );
+	glShadeModel(GL_SMOOTH);
 
 	// set the viewport to be a square centered in the window:
 
@@ -423,35 +427,32 @@ Display( )
 
 	// draw the box object by calling up its display list:
 
-	Pattern.Use( );
+	Pattern.Use();
 
-	// set the uniform variables that will change over time:
+	Pattern.SetUniformVariable("uKa", 0.15f);
+	Pattern.SetUniformVariable("uKd", 0.65f);
+	Pattern.SetUniformVariable("uKs", 1.00f);
+	Pattern.SetUniformVariable("uShininess", 100.f);
 
-	//int msec = glutGet(GLUT_ELAPSED_TIME) % MSEC;
-	//float nowTime = (float)msec / 1000.f;
+	Pattern.SetUniformVariable("uA", uA);
+	Pattern.SetUniformVariable("uP", uP);
 
-	//Pattern.SetUniformVariable("uAd", kAd.GetValue(nowTime));
-	//Pattern.SetUniformVariable("uBd", 0.15f);
-	//Pattern.SetUniformVariable("uTol", 0.08f);
+	Pattern.SetUniformVariable("uLightX", 6.0f);
+	Pattern.SetUniformVariable("uLightY", 10.0f);
+	Pattern.SetUniformVariable("uLightZ", 6.0f);
 
-	//float Ad = 0.15f + 0.05f * sinf(2.f * F_PI * Time);   // ellipse size in s
-	//float Bd = 0.20f + 0.05f * cosf(2.f * F_PI * Time);   // ellipse size in t
-	//float Tol = 0.10f + 0.05f * sinf(4.f * F_PI * Time);   // smoothness amount
-
-	Pattern.SetUniformVariable("uAd", Ad);
-	Pattern.SetUniformVariable("uBd", Bd);
-	Pattern.SetUniformVariable("uTol", Tol);
-
-	Pattern.SetUniformVariable("uNoiseAmp", NoiseAmp);
-	Pattern.SetUniformVariable("uNoiseFreq", NoiseFreq);
+	Pattern.SetUniformVariable("uNoiseAmp", NoiseAmp);   
+	Pattern.SetUniformVariable("uNoiseFreq", NoiseFreq); 
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
-	Pattern.SetUniformVariable((char*)"Noise3", 0);   
+	Pattern.SetUniformVariable((char*)"Noise3", 0);
 
-	//glCallList( SphereList );
-	glCallList(DL);
-	Pattern.UnUse( );       // Pattern.Use(0);  also works
+	glCallList(CurtainDL);
+	Pattern.UnUse();
+
+
+
 
 
 	// draw some gratuitous text that just rotates on top of the scene:
@@ -502,8 +503,6 @@ DoAxesMenu( int id )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
-
-
 void
 DoColorMenu( int id )
 {
@@ -512,8 +511,6 @@ DoColorMenu( int id )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
-
-
 void
 DoDebugMenu( int id )
 {
@@ -522,10 +519,7 @@ DoDebugMenu( int id )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
-
-
 // main menu callback:
-
 void
 DoMainMenu( int id )
 {
@@ -552,8 +546,6 @@ DoMainMenu( int id )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
-
-
 void
 DoProjectMenu( int id )
 {
@@ -562,10 +554,7 @@ DoProjectMenu( int id )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
-
-
 // use glut to display a string of characters using a raster font:
-
 void
 DoRasterString( float x, float y, float z, char *s )
 {
@@ -577,10 +566,7 @@ DoRasterString( float x, float y, float z, char *s )
 		glutBitmapCharacter( GLUT_BITMAP_TIMES_ROMAN_24, c );
 	}
 }
-
-
 // use glut to display a string of characters using a stroke font:
-
 void
 DoStrokeString( float x, float y, float z, float ht, char *s )
 {
@@ -595,10 +581,7 @@ DoStrokeString( float x, float y, float z, float ht, char *s )
 		}
 	glPopMatrix( );
 }
-
-
 // return the number of seconds since the start of the program:
-
 float
 ElapsedSeconds( )
 {
@@ -610,10 +593,7 @@ ElapsedSeconds( )
 
 	return (float)ms / 1000.f;
 }
-
-
 // initialize the glui window:
-
 void
 InitMenus( )
 {
@@ -654,12 +634,8 @@ InitMenus( )
 
 	glutAttachMenu( GLUT_RIGHT_BUTTON );
 }
-
-
-
 // initialize the glut and OpenGL libraries:
 //	also setup callback functions
-
 void
 InitGraphics( )
 {
@@ -759,22 +735,35 @@ InitGraphics( )
 	// set the uniform variables that will not change:
 	
 	Pattern.Use( );
-	Pattern.SetUniformVariable( (char *)"uKa", 0.1f );
-	Pattern.SetUniformVariable( (char *)"uKd", 0.5f );
-	Pattern.SetUniformVariable( (char *)"uKs", 0.4f );
+	
 	//Pattern.SetUniformVariable( (char *)"uColor", 1.f, 0.5f, 0.f, 1.f );
 	//Pattern.SetUniformVariable( (char *)"uSpecularColor", 1.f, 1.f, 1.f, 1.f );
-	Pattern.SetUniformVariable( (char *)"uShininess", 12.f );
 
-	Pattern.SetUniformVariable((char*)"uAd", Ad);
-	Pattern.SetUniformVariable((char*)"uBd", Bd);
-	Pattern.SetUniformVariable((char*)"uTol", Tol);
+	//Pattern.SetUniformVariable((char*)"uAd", Ad);
+	//Pattern.SetUniformVariable((char*)"uBd", Bd);
+	//Pattern.SetUniformVariable((char*)"uTol", Tol);
 
-	Pattern.SetUniformVariable((char*)"uNoiseAmp", NoiseAmp);
-	Pattern.SetUniformVariable((char*)"uNoiseFreq", NoiseFreq);
+	//Pattern.SetUniformVariable((char*)"uNoiseAmp", NoiseAmp);
+	//Pattern.SetUniformVariable((char*)"uNoiseFreq", NoiseFreq);
 
+	//Pattern.Use();
 
-	Pattern.UnUse( );
+	//Pattern.SetUniformVariable((char*)"uKa", 0.15f);     // ambient
+	//Pattern.SetUniformVariable((char*)"uKd", 0.75f);     // diffuse
+	//Pattern.SetUniformVariable((char*)"uKs", 0.85f);     // specular strength
+	//Pattern.SetUniformVariable((char*)"uShininess", 80.f); // tighter, brighter highlight
+
+	Pattern.SetUniformVariable((char*)"uKa", 0.1f);
+	Pattern.SetUniformVariable((char*)"uKd", 0.5f);
+	Pattern.SetUniformVariable((char*)"uKs", 0.4f);
+	Pattern.SetUniformVariable((char*)"uShininess", 12.f);
+	Pattern.SetUniformVariable((char*)"uA", uA);
+	Pattern.SetUniformVariable((char*)"uP", uP);
+	Pattern.SetUniformVariable((char*)"uLightX", 6.0f);
+	Pattern.SetUniformVariable((char*)"uLightY", 10.0f);
+	Pattern.SetUniformVariable((char*)"uLightZ", 10.0f);
+
+	Pattern.UnUse();
 
 
 
@@ -845,10 +834,10 @@ InitLists( )
 
 	// create the object:
 
-	SphereList = glGenLists( 1 );
-	glNewList( SphereList, GL_COMPILE );
-		OsuSphere( 1., 64, 64 );
-	glEndList( );
+	//SphereList = glGenLists( 1 );
+	//glNewList( SphereList, GL_COMPILE );
+	//	OsuSphere( 1., 64, 64 );
+	//glEndList( );
 
 
 	// create the axes:
@@ -860,14 +849,42 @@ InitLists( )
 		glLineWidth( 1. );
 	glEndList( );
 
-	// do this in InitLists( ):
-	DL = glGenLists(1);
-	glNewList(DL, GL_COMPILE);
-	glPushMatrix();
-	glScalef(0.1f, 0.1f, 0.1f);     // scale
-	LoadObjFile("obj_files/spaceship.obj");
-	glPopMatrix();
+	//// do this in InitLists( ):
+	//DL = glGenLists(1);
+	//glNewList(DL, GL_COMPILE);
+	//glPushMatrix();
+	//glScalef(0.1f, 0.1f, 0.1f);     // scale
+	//LoadObjFile("obj_files/spaceship.obj");
+	//glPopMatrix();
+	//glEndList();
+
+	CurtainDL = glGenLists(1);
+	glNewList(CurtainDL, GL_COMPILE);
+	float xmin = -1.f;
+	float xmax = 1.f;
+	float ymin = -1.f;
+	float ymax = 1.f;
+	float dx = xmax - xmin;
+	float dy = ymax - ymin;
+	float z = 0.f;
+	int numy = 128; // row
+	int numx = 128; // col
+	for (int iy = 0; iy < numy; iy++)
+	{
+		glBegin(GL_QUAD_STRIP);
+		glNormal3f(0., 0., 1.);
+		for (int ix = 0; ix <= numx; ix++)
+		{
+			glTexCoord2f((float)ix / (float)numx, (float)(iy + 0) / (float)numy);
+			glVertex3f(xmin + dx * (float)ix / (float)numx, ymin + dy * (float)(iy + 0) / (float)numy, z);
+
+			glTexCoord2f((float)ix / (float)numx, (float)(iy + 1) / (float)numy);
+			glVertex3f(xmin + dx * (float)ix / (float)numx, ymin + dy * (float)(iy + 1) / (float)numy, z);
+		}
+		glEnd();
+	}
 	glEndList();
+
 
 }
 
@@ -914,22 +931,17 @@ Keyboard( unsigned char c, int x, int y )
 			DoMainMenu( QUIT );	// will not return here
 			break;				// happy compiler
 
-
-		case 'a': Ad = clamp(Ad - STEP, 0.0f, 1.0f); break;
-		case 'A': Ad = clamp(Ad + STEP, 0.0f, 1.0f); break;
-
-		case 'b': Bd = clamp(Bd - STEP, 0.0f, 1.0f); break;
-		case 'B': Bd = clamp(Bd + STEP, 0.0f, 1.0f); break;
-
-		case 't': Tol = clamp(Tol - STEP, 0.0f, 1.0f); break;
-		case 'T': Tol = clamp(Tol + STEP, 0.0f, 1.0f); break;
-
 		case 'n': NoiseAmp = clamp(NoiseAmp - STEP, 0.0f, 1.0f); break;
 		case 'N': NoiseAmp = clamp(NoiseAmp + STEP, 0.0f, 1.0f); break;
 
 		case 'm': NoiseFreq = clamp(NoiseFreq - STEP, 0.0f, 1.0f); break;
 		case 'M': NoiseFreq = clamp(NoiseFreq + STEP, 0.0f, 1.0f); break;
 
+		case '1': uA = clamp(uA - STEP, 0.0f, 1.0f); break;
+		case '!': uA = clamp(uA + STEP, 0.0f, 1.0f); break;
+
+		case '2': uP = clamp(uP - STEP, 0.0f, 1.0f); break;
+		case '@': uP = clamp(uP + STEP, 0.0f, 1.0f); break;
 
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );
@@ -943,7 +955,6 @@ Keyboard( unsigned char c, int x, int y )
 
 
 // called when the mouse button transitions down or up:
-
 void
 MouseButton( int button, int state, int x, int y )
 {
@@ -1002,10 +1013,7 @@ MouseButton( int button, int state, int x, int y )
 	glutPostRedisplay();
 
 }
-
-
 // called when the mouse moves while a button is down:
-
 void
 MouseMotion( int x, int y )
 {
@@ -1034,12 +1042,9 @@ MouseMotion( int x, int y )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
-
-
 // reset the transformations and the colors:
 // this only sets the global variables --
 // the glut main loop is responsible for redrawing the scene
-
 void
 Reset( )
 {
@@ -1052,10 +1057,7 @@ Reset( )
 	NowProjection = PERSP;
 	Xrot = Yrot = 0.;
 }
-
-
 // called when user resizes the window:
-
 void
 Resize( int width, int height )
 {
@@ -1065,10 +1067,7 @@ Resize( int width, int height )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
-
-
 // handle a change to the window's visibility:
-
 void
 Visibility ( int state )
 {
@@ -1088,29 +1087,17 @@ Visibility ( int state )
 	}
 }
 
-
-
 ///////////////////////////////////////   HANDY UTILITIES:  //////////////////////////
 
-
 // the stroke characters 'X' 'Y' 'Z' :
-
 static float xx[ ] = { 0.f, 1.f, 0.f, 1.f };
-
 static float xy[ ] = { -.5f, .5f, .5f, -.5f };
-
 static int xorder[ ] = { 1, 2, -3, 4 };
-
 static float yx[ ] = { 0.f, 0.f, -.5f, .5f };
-
 static float yy[ ] = { 0.f, .6f, 1.f, 1.f };
-
 static int yorder[ ] = { 1, 2, 3, -2, 4 };
-
 static float zx[ ] = { 1.f, 0.f, 1.f, 0.f, .25f, .75f };
-
 static float zy[ ] = { .5f, .5f, -.5f, -.5f, 0.f, 0.f };
-
 static int zorder[ ] = { 1, 2, 3, 4, -5, 6 };
 
 // fraction of the length to use as height of the characters:
@@ -1121,7 +1108,6 @@ const float BASEFRAC = 1.10f;
 
 //	Draw a set of 3D axes:
 //	(length is the axis length in world coordinates)
-
 void
 Axes( float length )
 {
@@ -1187,14 +1173,11 @@ Axes( float length )
 	glEnd( );
 
 }
-
-
 // function to convert HSV to RGB
 // 0.  <=  s, v, r, g, b  <=  1.
 // 0.  <= h  <=  360.
 // when this returns, call:
 //		glColor3fv( rgb );
-
 void
 HsvRgb( float hsv[3], float rgb[3] )
 {
@@ -1265,7 +1248,6 @@ HsvRgb( float hsv[3], float rgb[3] )
 	rgb[1] = g;
 	rgb[2] = b;
 }
-
 void
 Cross(float v1[3], float v2[3], float vout[3])
 {
@@ -1277,14 +1259,11 @@ Cross(float v1[3], float v2[3], float vout[3])
 	vout[1] = tmp[1];
 	vout[2] = tmp[2];
 }
-
 float
 Dot(float v1[3], float v2[3])
 {
 	return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
 }
-
-
 float
 Unit(float vin[3], float vout[3])
 {
@@ -1304,8 +1283,6 @@ Unit(float vin[3], float vout[3])
 	}
 	return dist;
 }
-
-
 float
 Unit( float v[3] )
 {

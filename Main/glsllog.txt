@@ -1,6 +1,7 @@
 
-ERROR: 0:54: 'nv' : redefinition 
-ERROR: 0:54: '' : compilation terminated 
-ERROR: 2 compilation errors.  No code generated.
+ERROR: 0:77: 'PerturbNormal2' : no matching overloaded function found 
+ERROR: 0:77: 'assign' :  cannot convert from ' const float' to ' temp 3-component vector of float'
+ERROR: 0:77: '' : compilation terminated 
+ERROR: 3 compilation errors.  No code generated.
 
 
