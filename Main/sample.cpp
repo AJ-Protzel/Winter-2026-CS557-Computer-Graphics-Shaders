@@ -187,8 +187,7 @@ float Ad = 0.05f;
 float Bd = 0.05f;
 float Tol = 0.05f;
 
-float NoiseAmp = 0.05f;
-float NoiseFreq = 0.05f;
+
 GLuint NoiseTex3D = 0;
 GLuint DL;
 
@@ -203,7 +202,25 @@ float uKs = 0.05f;
 float uLightX = 0.05f;
 float uLightY = 0.05f;
 float uLightZ = 0.05f;
-GLuint CurtainDL;
+//GLuint CurtainDL;
+
+GLuint CatHDL;
+float Eta = 1.4f;   
+float Mix = 0.0f; 
+float NoiseAmp = 0.2f;     
+float NoiseFreq = 0.10f;       
+GLuint CubeName = 0;
+char* FaceFiles[6] =
+{
+	(char*)"kec.posx.bmp",
+	(char*)"kec.negx.bmp",
+	(char*)"kec.posy.bmp",
+	(char*)"kec.negy.bmp",
+	(char*)"kec.posz.bmp",
+	(char*)"kec.negz.bmp"
+};
+
+
 
 
 // function prototypes:
@@ -285,13 +302,14 @@ MulArray3(float factor, float a, float b, float c )
 //#include "osusphere.cpp"
 //#include "osucone.cpp"
 //#include "osutorus.cpp"
-//#include "bmptotexture.cpp"
+#include "bmptotexture.cpp"
 #include "loadobjfile.cpp"
 #include "keytime.cpp"
 #include "glslprogram.cpp"
 
 float NowS0, NowT0, NowD;
 GLSLProgram Pattern;
+GLSLProgram Cube;
 
 
 // main program:
@@ -427,71 +445,101 @@ Display( )
 
 	// draw the box object by calling up its display list:
 
-	Pattern.Use();
+	//Pattern.Use();
 
-	Pattern.SetUniformVariable("uKa", 0.15f);
-	Pattern.SetUniformVariable("uKd", 0.65f);
-	Pattern.SetUniformVariable("uKs", 1.00f);
-	Pattern.SetUniformVariable("uShininess", 100.f);
+	//Pattern.SetUniformVariable("uKa", 0.15f);
+	//Pattern.SetUniformVariable("uKd", 0.65f);
+	//Pattern.SetUniformVariable("uKs", 1.00f);
+	//Pattern.SetUniformVariable("uShininess", 100.f);
 
-	Pattern.SetUniformVariable("uA", uA);
-	Pattern.SetUniformVariable("uP", uP);
+	//Pattern.SetUniformVariable("uA", uA);
+	//Pattern.SetUniformVariable("uP", uP);
 
-	Pattern.SetUniformVariable("uLightX", 6.0f);
-	Pattern.SetUniformVariable("uLightY", 10.0f);
-	Pattern.SetUniformVariable("uLightZ", 6.0f);
+	//Pattern.SetUniformVariable("uLightX", 6.0f);
+	//Pattern.SetUniformVariable("uLightY", 10.0f);
+	//Pattern.SetUniformVariable("uLightZ", 6.0f);
 
-	Pattern.SetUniformVariable("uNoiseAmp", NoiseAmp);   
-	Pattern.SetUniformVariable("uNoiseFreq", NoiseFreq); 
+	//Pattern.SetUniformVariable("uNoiseAmp", NoiseAmp);   
+	//Pattern.SetUniformVariable("uNoiseFreq", NoiseFreq); 
 
-	glActiveTexture(GL_TEXTURE0);
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
+	//Pattern.SetUniformVariable((char*)"Noise3", 0);
+
+	///*glCallList(CurtainDL);*/
+	//glCallList(CatHDL);
+	//Pattern.UnUse();
+
+
+
+
+
+	//// draw some gratuitous text that just rotates on top of the scene:
+	//// i commented out the actual text-drawing calls -- put them back in if you have a use for them
+	//// a good use for thefirst one might be to have your name on the screen
+	//// a good use for the second one might be to have vertex numbers on the screen alongside each vertex
+
+	////glDisable( GL_DEPTH_TEST );
+	////glColor3f( 0.f, 1.f, 1.f );
+	////DoRasterString( 0.f, 1.f, 0.f, (char *)"Text That Moves" );
+
+
+	//// draw some gratuitous text that is fixed on the screen:
+	////
+	//// the projection matrix is reset to define a scene whose
+	//// world coordinate system goes from 0-100 in each axis
+	////
+	//// this is called "percent units", and is just a convenience
+	////
+	//// the modelview matrix is reset to identity as we don't
+	//// want to transform these coordinates
+
+	////glDisable( GL_DEPTH_TEST );
+	////glMatrixMode( GL_PROJECTION );
+	////glLoadIdentity( );
+	////gluOrtho2D( 0.f, 100.f,     0.f, 100.f );
+	////glMatrixMode( GL_MODELVIEW );
+	////glLoadIdentity( );
+	////glColor3f( 1.f, 1.f, 1.f );
+	////DoRasterString( 5.f, 5.f, 0.f, (char *)"Text That Doesn't" );
+
+	//// swap the double-buffered framebuffers:
+
+
+	const int NoiseUnit = 0;
+	const int ReflectUnit = 5;
+	const int RefractUnit = 6;
+
+	Cube.Use();
+
+	glActiveTexture(GL_TEXTURE0 + NoiseUnit);
 	glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
-	Pattern.SetUniformVariable((char*)"Noise3", 0);
+	Cube.SetUniformVariable((char*)"Noise3", NoiseUnit);
 
-	glCallList(CurtainDL);
-	Pattern.UnUse();
+	glActiveTexture(GL_TEXTURE0 + ReflectUnit);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, CubeName);
+	glActiveTexture(GL_TEXTURE0 + RefractUnit);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, CubeName);
 
+	Cube.SetUniformVariable("uReflectUnit", ReflectUnit);
+	Cube.SetUniformVariable("uRefractUnit", RefractUnit);
+	Cube.SetUniformVariable("uMix", Mix);
+	Cube.SetUniformVariable("uEta", Eta);
+	Cube.SetUniformVariable("uNoiseAmp", NoiseAmp);
+	Cube.SetUniformVariable("uNoiseFreq", NoiseFreq);
+	Cube.SetUniformVariable("uWhiteMix", 0.2f);  // ok to hard-code
 
+	glCallList(CatHDL);
 
+	Cube.UnUse();
 
-
-	// draw some gratuitous text that just rotates on top of the scene:
-	// i commented out the actual text-drawing calls -- put them back in if you have a use for them
-	// a good use for thefirst one might be to have your name on the screen
-	// a good use for the second one might be to have vertex numbers on the screen alongside each vertex
-
-	//glDisable( GL_DEPTH_TEST );
-	//glColor3f( 0.f, 1.f, 1.f );
-	//DoRasterString( 0.f, 1.f, 0.f, (char *)"Text That Moves" );
-
-
-	// draw some gratuitous text that is fixed on the screen:
-	//
-	// the projection matrix is reset to define a scene whose
-	// world coordinate system goes from 0-100 in each axis
-	//
-	// this is called "percent units", and is just a convenience
-	//
-	// the modelview matrix is reset to identity as we don't
-	// want to transform these coordinates
-
-	//glDisable( GL_DEPTH_TEST );
-	//glMatrixMode( GL_PROJECTION );
-	//glLoadIdentity( );
-	//gluOrtho2D( 0.f, 100.f,     0.f, 100.f );
-	//glMatrixMode( GL_MODELVIEW );
-	//glLoadIdentity( );
-	//glColor3f( 1.f, 1.f, 1.f );
-	//DoRasterString( 5.f, 5.f, 0.f, (char *)"Text That Doesn't" );
-
-	// swap the double-buffered framebuffers:
 
 	glutSwapBuffers( );
 
-	// be sure the graphics buffer has been sent:
-	// note: be sure to use glFlush( ) here, not glFinish( ) !
+	//// be sure the graphics buffer has been sent:
+	//// note: be sure to use glFlush( ) here, not glFinish( ) !
 
-	glFlush( );
+	//glFlush( );
 }
 
 
@@ -735,23 +783,6 @@ InitGraphics( )
 	// set the uniform variables that will not change:
 	
 	Pattern.Use( );
-	
-	//Pattern.SetUniformVariable( (char *)"uColor", 1.f, 0.5f, 0.f, 1.f );
-	//Pattern.SetUniformVariable( (char *)"uSpecularColor", 1.f, 1.f, 1.f, 1.f );
-
-	//Pattern.SetUniformVariable((char*)"uAd", Ad);
-	//Pattern.SetUniformVariable((char*)"uBd", Bd);
-	//Pattern.SetUniformVariable((char*)"uTol", Tol);
-
-	//Pattern.SetUniformVariable((char*)"uNoiseAmp", NoiseAmp);
-	//Pattern.SetUniformVariable((char*)"uNoiseFreq", NoiseFreq);
-
-	//Pattern.Use();
-
-	//Pattern.SetUniformVariable((char*)"uKa", 0.15f);     // ambient
-	//Pattern.SetUniformVariable((char*)"uKd", 0.75f);     // diffuse
-	//Pattern.SetUniformVariable((char*)"uKs", 0.85f);     // specular strength
-	//Pattern.SetUniformVariable((char*)"uShininess", 80.f); // tighter, brighter highlight
 
 	Pattern.SetUniformVariable((char*)"uKa", 0.1f);
 	Pattern.SetUniformVariable((char*)"uKd", 0.5f);
@@ -770,6 +801,29 @@ InitGraphics( )
 
 
 
+	Cube.Init();
+	bool ok = Cube.Create((char*)"cube.vert", (char*)"cube.frag");
+	if (!ok) fprintf(stderr, "Could not create the Cube shader!\n");
+
+	glGenTextures(1, &CubeName);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, CubeName);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	for (int file = 0; file < 6; file++)
+	{
+		int nums, numt;
+		unsigned char* texture2d = BmpToTexture(FaceFiles[file], &nums, &numt);
+		if (texture2d == NULL)
+			fprintf(stderr, "Could not open BMP 2D texture '%s'", FaceFiles[file]);
+		else
+			fprintf(stderr, "BMP 2D texture '%s' read -- nums = %d, numt = %d\n", FaceFiles[file], nums, numt);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + file, 0, 3, nums, numt, 0,
+			GL_RGB, GL_UNSIGNED_BYTE, texture2d);
+		delete[] texture2d;
+	}
 
 
 
@@ -808,7 +862,6 @@ InitGraphics( )
 	// upload RGBA8 volume:
 	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, W, H, D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 
-	// (Optional) verify upload worked:
 	GLint w = 0, h = 0, d = 0;
 	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_WIDTH, &w);
 	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_HEIGHT, &h);
@@ -834,10 +887,12 @@ InitLists( )
 
 	// create the object:
 
-	//SphereList = glGenLists( 1 );
-	//glNewList( SphereList, GL_COMPILE );
-	//	OsuSphere( 1., 64, 64 );
-	//glEndList( );
+	CatHDL = glGenLists(1);
+	glNewList(CatHDL, GL_COMPILE);
+	glPushMatrix();
+	LoadObjFile("obj_files/catH.obj");
+	glPopMatrix();
+	glEndList();
 
 
 	// create the axes:
@@ -848,43 +903,6 @@ InitLists( )
 			Axes( 1.5 );
 		glLineWidth( 1. );
 	glEndList( );
-
-	//// do this in InitLists( ):
-	//DL = glGenLists(1);
-	//glNewList(DL, GL_COMPILE);
-	//glPushMatrix();
-	//glScalef(0.1f, 0.1f, 0.1f);     // scale
-	//LoadObjFile("obj_files/spaceship.obj");
-	//glPopMatrix();
-	//glEndList();
-
-	CurtainDL = glGenLists(1);
-	glNewList(CurtainDL, GL_COMPILE);
-	float xmin = -1.f;
-	float xmax = 1.f;
-	float ymin = -1.f;
-	float ymax = 1.f;
-	float dx = xmax - xmin;
-	float dy = ymax - ymin;
-	float z = 0.f;
-	int numy = 128; // row
-	int numx = 128; // col
-	for (int iy = 0; iy < numy; iy++)
-	{
-		glBegin(GL_QUAD_STRIP);
-		glNormal3f(0., 0., 1.);
-		for (int ix = 0; ix <= numx; ix++)
-		{
-			glTexCoord2f((float)ix / (float)numx, (float)(iy + 0) / (float)numy);
-			glVertex3f(xmin + dx * (float)ix / (float)numx, ymin + dy * (float)(iy + 0) / (float)numy, z);
-
-			glTexCoord2f((float)ix / (float)numx, (float)(iy + 1) / (float)numy);
-			glVertex3f(xmin + dx * (float)ix / (float)numx, ymin + dy * (float)(iy + 1) / (float)numy, z);
-		}
-		glEnd();
-	}
-	glEndList();
-
 
 }
 
@@ -906,24 +924,24 @@ Keyboard( unsigned char c, int x, int y )
 
 	switch( c )
 	{
-	case 'f':
-	case 'F':
-		Freeze = !Freeze;
-		if (Freeze)
-			glutIdleFunc(NULL);
-		else
-			glutIdleFunc(Animate);
-		break;
+		//case 'f':
+		//case 'F':
+		//	Freeze = !Freeze;
+		//	if (Freeze)
+		//		glutIdleFunc(NULL);
+		//	else
+		//		glutIdleFunc(Animate);
+		//	break;
 
-		case 'o':
-		case 'O':
-			NowProjection = ORTHO;
-			break;
+		//case 'o':
+		//case 'O':
+		//	NowProjection = ORTHO;
+		//	break;
 
-		case 'p':
-		case 'P':
-			NowProjection = PERSP;
-			break;
+		//case 'p':
+		//case 'P':
+		//	NowProjection = PERSP;
+		//	break;
 
 		case 'q':
 		case 'Q':
@@ -931,17 +949,14 @@ Keyboard( unsigned char c, int x, int y )
 			DoMainMenu( QUIT );	// will not return here
 			break;				// happy compiler
 
-		case 'n': NoiseAmp = clamp(NoiseAmp - STEP, 0.0f, 1.0f); break;
-		case 'N': NoiseAmp = clamp(NoiseAmp + STEP, 0.0f, 1.0f); break;
+		case '0': NoiseAmp = clamp(NoiseAmp - STEP, 0.0f, 1.0f); break;
+		case ')': NoiseAmp = clamp(NoiseAmp + STEP, 0.0f, 1.0f); break;
 
-		case 'm': NoiseFreq = clamp(NoiseFreq - STEP, 0.0f, 1.0f); break;
-		case 'M': NoiseFreq = clamp(NoiseFreq + STEP, 0.0f, 1.0f); break;
+		case '9': NoiseFreq = clamp(NoiseFreq - STEP, 0.0f, 1.0f); break;
+		case '(': NoiseFreq = clamp(NoiseFreq + STEP, 0.0f, 1.0f); break;
 
-		case '1': uA = clamp(uA - STEP, 0.0f, 1.0f); break;
-		case '!': uA = clamp(uA + STEP, 0.0f, 1.0f); break;
-
-		case '2': uP = clamp(uP - STEP, 0.0f, 1.0f); break;
-		case '@': uP = clamp(uP + STEP, 0.0f, 1.0f); break;
+		case '1': Mix = clamp(Mix - STEP, 0.0f, 1.0f); break;
+		case '!': Mix = clamp(Mix + STEP, 0.0f, 1.0f); break;
 
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );
