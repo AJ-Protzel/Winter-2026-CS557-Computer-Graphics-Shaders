@@ -212,12 +212,12 @@ float NoiseFreq = 0.10f;
 GLuint CubeName = 0;
 char* FaceFiles[6] =
 {
-	(char*)"kec.posx.bmp",
-	(char*)"kec.negx.bmp",
-	(char*)"kec.posy.bmp",
-	(char*)"kec.negy.bmp",
-	(char*)"kec.posz.bmp",
-	(char*)"kec.negz.bmp"
+	(char*)"bmp_files/kec.posx.bmp",
+	(char*)"bmp_files/kec.negx.bmp",
+	(char*)"bmp_files/kec.posy.bmp",
+	(char*)"bmp_files/kec.negy.bmp",
+	(char*)"bmp_files/kec.posz.bmp",
+	(char*)"bmp_files/kec.negz.bmp"
 };
 
 
@@ -308,9 +308,8 @@ MulArray3(float factor, float a, float b, float c )
 #include "glslprogram.cpp"
 
 float NowS0, NowT0, NowD;
-GLSLProgram Pattern;
 GLSLProgram Cube;
-
+GLSLProgram Pattern;
 
 // main program:
 int
@@ -373,174 +372,81 @@ Animate( )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
-// draw the complete scene:
+
 void
-Display( )
+Display()
 {
-	// set which window we want to do the graphics into:
-	glutSetWindow( MainWindow );
+	glutSetWindow(MainWindow);
 
-	// erase the background:
-	glDrawBuffer( GL_BACK );
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glDrawBuffer(GL_BACK);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
 
-	glEnable( GL_DEPTH_TEST );
-
-	// specify shading to be flat:
-
-	//glShadeModel( GL_FLAT );
 	glShadeModel(GL_SMOOTH);
 
-	// set the viewport to be a square centered in the window:
+	GLsizei vx = glutGet(GLUT_WINDOW_WIDTH);
+	GLsizei vy = glutGet(GLUT_WINDOW_HEIGHT);
+	GLsizei v = (vx < vy) ? vx : vy;  
+	GLint   xl = (vx - v) / 2;
+	GLint   yb = (vy - v) / 2;
+	glViewport(xl, yb, v, v);
 
-	GLsizei vx = glutGet( GLUT_WINDOW_WIDTH );
-	GLsizei vy = glutGet( GLUT_WINDOW_HEIGHT );
-	GLsizei v = vx < vy ? vx : vy;			// minimum dimension
-	GLint xl = ( vx - v ) / 2;
-	GLint yb = ( vy - v ) / 2;
-	glViewport( xl, yb,  v, v );
-
-	// set the viewing volume:
-	// remember that the Z clipping  values are given as DISTANCES IN FRONT OF THE EYE
-	// USE gluOrtho2D( ) IF YOU ARE DOING 2D !
-
-	glMatrixMode( GL_PROJECTION );
-	glLoadIdentity( );
-	if( NowProjection == ORTHO )
-		glOrtho( -2.f, 2.f,     -2.f, 2.f,     0.1f, 1000.f );
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if (NowProjection == ORTHO)
+		glOrtho(-2.f, 2.f, -2.f, 2.f, 0.1f, 1000.f);
 	else
-		gluPerspective( 70.f, 1.f,	0.1f, 1000.f );
+		gluPerspective(70.f, 1.f, 0.1f, 1000.f);
 
-	// place the objects into the scene:
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(0.f, 0.f, 3.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f);
 
-	glMatrixMode( GL_MODELVIEW );
-	glLoadIdentity( );
+	glRotatef((GLfloat)Yrot, 0.f, 1.f, 0.f);
+	glRotatef((GLfloat)Xrot, 1.f, 0.f, 0.f);
 
-	// set the eye position, look-at position, and up-vector:
+	if (Scale < MINSCALE) Scale = MINSCALE;
+	glScalef((GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale);
 
-	gluLookAt( 0.f, 0.f, 3.f,     0.f, 0.f, 0.f,     0.f, 1.f, 0.f );
-
-	// rotate the scene:
-
-	glRotatef( (GLfloat)Yrot, 0.f, 1.f, 0.f );
-	glRotatef( (GLfloat)Xrot, 1.f, 0.f, 0.f );
-
-	// uniformly scale the scene:
-
-	if( Scale < MINSCALE )
-		Scale = MINSCALE;
-	glScalef( (GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale );
-
-	// possibly draw the axes:
-
-	if( AxesOn != 0 )
+	if (AxesOn != 0)
 	{
-		glColor3fv( &Colors[NowColor][0] );
-		glCallList( AxesList );
+		glColor3fv(&Colors[NowColor][0]);
+		glCallList(AxesList);
 	}
 
-	// since we are using glScalef( ), be sure the normals get unitized:
-
-	glEnable( GL_NORMALIZE );
-
-	// draw the box object by calling up its display list:
-
-	//Pattern.Use();
-
-	//Pattern.SetUniformVariable("uKa", 0.15f);
-	//Pattern.SetUniformVariable("uKd", 0.65f);
-	//Pattern.SetUniformVariable("uKs", 1.00f);
-	//Pattern.SetUniformVariable("uShininess", 100.f);
-
-	//Pattern.SetUniformVariable("uA", uA);
-	//Pattern.SetUniformVariable("uP", uP);
-
-	//Pattern.SetUniformVariable("uLightX", 6.0f);
-	//Pattern.SetUniformVariable("uLightY", 10.0f);
-	//Pattern.SetUniformVariable("uLightZ", 6.0f);
-
-	//Pattern.SetUniformVariable("uNoiseAmp", NoiseAmp);   
-	//Pattern.SetUniformVariable("uNoiseFreq", NoiseFreq); 
-
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
-	//Pattern.SetUniformVariable((char*)"Noise3", 0);
-
-	///*glCallList(CurtainDL);*/
-	//glCallList(CatHDL);
-	//Pattern.UnUse();
-
-
-
-
-
-	//// draw some gratuitous text that just rotates on top of the scene:
-	//// i commented out the actual text-drawing calls -- put them back in if you have a use for them
-	//// a good use for thefirst one might be to have your name on the screen
-	//// a good use for the second one might be to have vertex numbers on the screen alongside each vertex
-
-	////glDisable( GL_DEPTH_TEST );
-	////glColor3f( 0.f, 1.f, 1.f );
-	////DoRasterString( 0.f, 1.f, 0.f, (char *)"Text That Moves" );
-
-
-	//// draw some gratuitous text that is fixed on the screen:
-	////
-	//// the projection matrix is reset to define a scene whose
-	//// world coordinate system goes from 0-100 in each axis
-	////
-	//// this is called "percent units", and is just a convenience
-	////
-	//// the modelview matrix is reset to identity as we don't
-	//// want to transform these coordinates
-
-	////glDisable( GL_DEPTH_TEST );
-	////glMatrixMode( GL_PROJECTION );
-	////glLoadIdentity( );
-	////gluOrtho2D( 0.f, 100.f,     0.f, 100.f );
-	////glMatrixMode( GL_MODELVIEW );
-	////glLoadIdentity( );
-	////glColor3f( 1.f, 1.f, 1.f );
-	////DoRasterString( 5.f, 5.f, 0.f, (char *)"Text That Doesn't" );
-
-	//// swap the double-buffered framebuffers:
-
+	glEnable(GL_NORMALIZE);
 
 	const int NoiseUnit = 0;
 	const int ReflectUnit = 5;
 	const int RefractUnit = 6;
 
-	Cube.Use();
+	Pattern.Use();
 
 	glActiveTexture(GL_TEXTURE0 + NoiseUnit);
 	glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
-	Cube.SetUniformVariable((char*)"Noise3", NoiseUnit);
+	Pattern.SetUniformVariable((char*)"Noise3", NoiseUnit);
 
 	glActiveTexture(GL_TEXTURE0 + ReflectUnit);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, CubeName);
+
 	glActiveTexture(GL_TEXTURE0 + RefractUnit);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, CubeName);
 
-	Cube.SetUniformVariable("uReflectUnit", ReflectUnit);
-	Cube.SetUniformVariable("uRefractUnit", RefractUnit);
-	Cube.SetUniformVariable("uMix", Mix);
-	Cube.SetUniformVariable("uEta", Eta);
-	Cube.SetUniformVariable("uNoiseAmp", NoiseAmp);
-	Cube.SetUniformVariable("uNoiseFreq", NoiseFreq);
-	Cube.SetUniformVariable("uWhiteMix", 0.2f);  // ok to hard-code
+	Pattern.SetUniformVariable("uReflectUnit", ReflectUnit);
+	Pattern.SetUniformVariable("uRefractUnit", RefractUnit);
+	Pattern.SetUniformVariable("uMix", Mix);
+	Pattern.SetUniformVariable("uEta", Eta);
+	Pattern.SetUniformVariable("uNoiseAmp", NoiseAmp);
+	Pattern.SetUniformVariable("uNoiseFreq", NoiseFreq);
+	Pattern.SetUniformVariable("uWhiteMix", 0.2f);
 
 	glCallList(CatHDL);
 
-	Cube.UnUse();
+	Pattern.UnUse();
 
-
-	glutSwapBuffers( );
-
-	//// be sure the graphics buffer has been sent:
-	//// note: be sure to use glFlush( ) here, not glFinish( ) !
-
-	//glFlush( );
+	glutSwapBuffers();
 }
+
 
 
 void
@@ -682,128 +588,59 @@ InitMenus( )
 
 	glutAttachMenu( GLUT_RIGHT_BUTTON );
 }
-// initialize the glut and OpenGL libraries:
-//	also setup callback functions
+
+
 void
-InitGraphics( )
+InitGraphics()
 {
 	if (DebugOn != 0)
 		fprintf(stderr, "Starting InitGraphics.\n");
 
-	// request the display modes:
-	// ask for red-green-blue-alpha color, double-buffering, and z-buffering:
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitWindowPosition(0, 0);
+	glutInitWindowSize(INIT_WINDOW_SIZE, INIT_WINDOW_SIZE);
+	MainWindow = glutCreateWindow(WINDOWTITLE);
+	glutSetWindowTitle(WINDOWTITLE);
+	glClearColor(BACKCOLOR[0], BACKCOLOR[1], BACKCOLOR[2], BACKCOLOR[3]);
 
-	glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
-
-	// set the initial window configuration:
-
-	glutInitWindowPosition( 0, 0 );
-	glutInitWindowSize( INIT_WINDOW_SIZE, INIT_WINDOW_SIZE );
-
-	// open the window and set its title:
-
-	MainWindow = glutCreateWindow( WINDOWTITLE );
-	glutSetWindowTitle( WINDOWTITLE );
-
-	// set the framebuffer clear values:
-
-	glClearColor( BACKCOLOR[0], BACKCOLOR[1], BACKCOLOR[2], BACKCOLOR[3] );
-
-	// setup the callback functions:
-	// DisplayFunc -- redraw the window
-	// ReshapeFunc -- handle the user resizing the window
-	// KeyboardFunc -- handle a keyboard input
-	// MouseFunc -- handle the mouse button going down or up
-	// MotionFunc -- handle the mouse moving with a button down
-	// PassiveMotionFunc -- handle the mouse moving with a button up
-	// VisibilityFunc -- handle a change in window visibility
-	// EntryFunc	-- handle the cursor entering or leaving the window
-	// SpecialFunc -- handle special keys on the keyboard
-	// SpaceballMotionFunc -- handle spaceball translation
-	// SpaceballRotateFunc -- handle spaceball rotation
-	// SpaceballButtonFunc -- handle spaceball button hits
-	// ButtonBoxFunc -- handle button box hits
-	// DialsFunc -- handle dial rotations
-	// TabletMotionFunc -- handle digitizing tablet motion
-	// TabletButtonFunc -- handle digitizing tablet button hits
-	// MenuStateFunc -- declare when a pop-up menu is in use
-	// TimerFunc -- trigger something to happen a certain time from now
-	// IdleFunc -- what to do when nothing else is going on
-
-	glutSetWindow( MainWindow );
-	glutDisplayFunc( Display );
-	glutReshapeFunc( Resize );
-	glutKeyboardFunc( Keyboard );
-	glutMouseFunc( MouseButton );
-	glutMotionFunc( MouseMotion );
+	glutSetWindow(MainWindow);
+	glutDisplayFunc(Display);
+	glutReshapeFunc(Resize);
+	glutKeyboardFunc(Keyboard);
+	glutMouseFunc(MouseButton);
+	glutMotionFunc(MouseMotion);
 	glutPassiveMotionFunc(MouseMotion);
-	//glutPassiveMotionFunc( NULL );
-	glutVisibilityFunc( Visibility );
-	glutEntryFunc( NULL );
-	glutSpecialFunc( NULL );
-	glutSpaceballMotionFunc( NULL );
-	glutSpaceballRotateFunc( NULL );
-	glutSpaceballButtonFunc( NULL );
-	glutButtonBoxFunc( NULL );
-	glutDialsFunc( NULL );
-	glutTabletMotionFunc( NULL );
-	glutTabletButtonFunc( NULL );
-	glutMenuStateFunc( NULL );
-	glutTimerFunc( -1, NULL, 0 );
-
-	// setup glut to call Animate( ) every time it has
-	// 	nothing it needs to respond to (which is most of the time)
-	// we don't need to do this for this program, and really should set the argument to NULL
-	// but, this sets us up nicely for doing animation
-
-	glutIdleFunc( Animate );
-
-	// init the glew package (a window must be open to do this):
+	glutVisibilityFunc(Visibility);
+	glutEntryFunc(NULL);
+	glutSpecialFunc(NULL);
+	glutSpaceballMotionFunc(NULL);
+	glutSpaceballRotateFunc(NULL);
+	glutSpaceballButtonFunc(NULL);
+	glutButtonBoxFunc(NULL);
+	glutDialsFunc(NULL);
+	glutTabletMotionFunc(NULL);
+	glutTabletButtonFunc(NULL);
+	glutMenuStateFunc(NULL);
+	glutTimerFunc(-1, NULL, 0);
+	glutIdleFunc(Animate);
 
 #ifdef WIN32
-	GLenum err = glewInit( );
-	if( err != GLEW_OK )
+	GLenum err = glewInit();
+	if (err != GLEW_OK)
 	{
-		fprintf( stderr, "glewInit Error\n" );
+		fprintf(stderr, "glewInit Error\n");
 	}
 	else
-		fprintf( stderr, "GLEW initialized OK\n" );
-	fprintf( stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+		fprintf(stderr, "GLEW initialized OK\n");
+	fprintf(stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 #endif
 
-	// all other setups go here, such as GLSLProgram and KeyTime setups:
-
-	Pattern.Init( );
-	bool valid = Pattern.Create( (char *)"pattern.vert", (char *)"pattern.frag" );
-	if( !valid )
-		fprintf( stderr, "Could not create the Pattern shader!\n" );
+	Pattern.Init();
+	bool valid = Pattern.Create((char*)"pattern.vert", (char*)"pattern.frag");
+	if (!valid)
+		fprintf(stderr, "Could not create the Pattern shader!\n");
 	else
-		fprintf( stderr, "Pattern shader created!\n" );
-
-	// set the uniform variables that will not change:
-	
-	Pattern.Use( );
-
-	Pattern.SetUniformVariable((char*)"uKa", 0.1f);
-	Pattern.SetUniformVariable((char*)"uKd", 0.5f);
-	Pattern.SetUniformVariable((char*)"uKs", 0.4f);
-	Pattern.SetUniformVariable((char*)"uShininess", 12.f);
-	Pattern.SetUniformVariable((char*)"uA", uA);
-	Pattern.SetUniformVariable((char*)"uP", uP);
-	Pattern.SetUniformVariable((char*)"uLightX", 6.0f);
-	Pattern.SetUniformVariable((char*)"uLightY", 10.0f);
-	Pattern.SetUniformVariable((char*)"uLightZ", 10.0f);
-
-	Pattern.UnUse();
-
-
-
-
-
-
-	Cube.Init();
-	bool ok = Cube.Create((char*)"cube.vert", (char*)"cube.frag");
-	if (!ok) fprintf(stderr, "Could not create the Cube shader!\n");
+		fprintf(stderr, "Pattern shader created!\n");
 
 	glGenTextures(1, &CubeName);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, CubeName);
@@ -812,45 +649,42 @@ InitGraphics( )
 	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
 	for (int file = 0; file < 6; file++)
 	{
-		int nums, numt;
+		int nums = 0, numt = 0;
 		unsigned char* texture2d = BmpToTexture(FaceFiles[file], &nums, &numt);
 		if (texture2d == NULL)
 			fprintf(stderr, "Could not open BMP 2D texture '%s'", FaceFiles[file]);
 		else
 			fprintf(stderr, "BMP 2D texture '%s' read -- nums = %d, numt = %d\n", FaceFiles[file], nums, numt);
+
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + file, 0, 3, nums, numt, 0,
 			GL_RGB, GL_UNSIGNED_BYTE, texture2d);
 		delete[] texture2d;
 	}
 
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-
-
-	// ---- Create a small 32^3 RGBA 3D noise texture (temporary but good enough) ----
 	const int W = 32, H = 32, D = 32;
 	std::vector<unsigned char> data(W * H * D * 4);
 
-	// tiny hash -> 0..255
 	auto h8 = [](int x, int y, int z)->unsigned char {
 		unsigned int n = (unsigned int)(x * 73856093) ^ (unsigned int)(y * 19349663) ^ (unsigned int)(z * 83492791);
 		n ^= (n >> 13); n *= 1274126177u; n ^= (n >> 16);
 		return (unsigned char)(n & 0xFF);
 		};
 
-	// each channel = a lower-frequency octave
 	for (int z = 0; z < D; ++z)
 		for (int y = 0; y < H; ++y)
 			for (int x = 0; x < W; ++x) {
 				const int i = ((z * H + y) * W + x) * 4;
-				data[i + 0] = h8(x, y, z); // octave 0
-				data[i + 1] = h8(x >> 1, y >> 1, z >> 1); // octave 1
-				data[i + 2] = h8(x >> 2, y >> 2, z >> 2); // octave 2
-				data[i + 3] = h8(x >> 3, y >> 3, z >> 3); // octave 3
+				data[i + 0] = h8(x, y, z);                   // octave 0
+				data[i + 1] = h8(x >> 1, y >> 1, z >> 1);    // octave 1
+				data[i + 2] = h8(x >> 2, y >> 2, z >> 2);    // octave 2
+				data[i + 3] = h8(x >> 3, y >> 3, z >> 3);    // octave 3
 			}
 
-	// GL creation / upload:
 	glGenTextures(1, &NoiseTex3D);
 	glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -859,7 +693,6 @@ InitGraphics( )
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 
-	// upload RGBA8 volume:
 	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, W, H, D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 
 	GLint w = 0, h = 0, d = 0;
@@ -867,15 +700,8 @@ InitGraphics( )
 	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_HEIGHT, &h);
 	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_DEPTH, &d);
 	printf("3D noise uploaded: %dx%dx%d\n", w, h, d);
-
-
 }
 
-
-// initialize the display lists that will not change:
-// (a display list is a way to store opengl commands in
-//  memory so that they can be played back efficiently at a later time
-//  with a call to glCallList( )
 
 void
 InitLists( )
@@ -886,7 +712,6 @@ InitLists( )
 	glutSetWindow( MainWindow );
 
 	// create the object:
-
 	CatHDL = glGenLists(1);
 	glNewList(CatHDL, GL_COMPILE);
 	glPushMatrix();
@@ -896,7 +721,6 @@ InitLists( )
 
 
 	// create the axes:
-
 	AxesList = glGenLists( 1 );
 	glNewList( AxesList, GL_COMPILE );
 		glLineWidth( AXES_WIDTH );
@@ -1311,3 +1135,5 @@ Unit( float v[3] )
 	}
 	return dist;
 }
+
+

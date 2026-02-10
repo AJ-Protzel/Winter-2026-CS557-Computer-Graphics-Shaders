@@ -1,77 +1,92 @@
 #version 330 compatibility
 
-// Lighting
-uniform float uKa, uKd, uKs;
-uniform float uShininess;
+uniform sampler3D    Noise3;
+uniform float         uNoiseAmp;
+uniform float         uNoiseFreq;
+uniform float        uEta;
+uniform float         uMix;
+uniform float         uWhiteMix;
+uniform samplerCube uReflectUnit;
+uniform samplerCube uRefractUnit;
 
-// Noise
-uniform float uNoiseAmp;   // amplitude
-uniform float uNoiseFreq;  // frequency (scales the lookup coords)
-uniform sampler3D Noise3;
+in vec3    vNormal;
+in vec3    vEyeDir;
+in vec3    vMC;
 
-// interpolated from the vertex shader:
-in  vec2  vST;                  // texture coords
-in  vec3  vN;                   // normal vector
-in  vec3  vL;                   // vector from point to light
-in  vec3  vE;                   // vector from point to eye
-in  vec3  vMC;			        // model coordinates
+const vec3  WHITE = vec3( 1.,1.,1. );
 
-const vec3 OBJECTCOLOR          = vec3( 0.88, 0.66, 0.12 );      // color to make the object
-const vec3 SPECULARCOLOR        = vec3( 1. , 1. , 1. );
-
-vec3 
-PerturbNormal2( float angx, float angy, vec3 n )
+vec3
+PerturbNormal3( float angx, float angy, float angz, vec3 n )
 {
-        float cx = cos( angx );
-        float sx = sin( angx );
-        float cy = cos( angy );
-        float sy = sin( angy );
+    float cx = cos( angx );
+    float sx = sin( angx );
+    float cy = cos( angy );
+    float sy = sin( angy );
+    float cz = cos( angz );
+    float sz = sin( angz );
+    
+    // rotate about x:
+    float yp =  n.y*cx - n.z*sx;    // y'
+    n.z      =  n.y*sx + n.z*cx;    // z'
+    n.y      =  yp;
+    // n.x      =  n.x;
 
-        // rotate about x:
-        float yp =  n.y*cx - n.z*sx;    // y'
-        n.z      =  n.y*sx + n.z*cx;    // z'
-        n.y      =  yp;
-        // n.x      =  n.x;
+    // rotate about y:
+    float xp =  n.x*cy + n.z*sy;    // x'
+    n.z      = -n.x*sy + n.z*cy;    // z'
+    n.x      =  xp;
+    // n.y      =  n.y;
 
-        // rotate about y:
-        float xp =  n.x*cy + n.z*sy;    // x'
-        n.z      = -n.x*sy + n.z*cy;    // z'
-        n.x      =  xp;
-        // n.y      =  n.y;
+    // rotate about z:
+          xp =  n.x*cz - n.y*sz;    // x'
+    n.y      =  n.x*sz + n.y*cz;    // y'
+    n.x      = xp;
+    // n.z      =  n.z;
 
-        return normalize( n );
+    return normalize( n );
 }
 
-void main( ) {
-    vec4 nvx = texture( Noise3, uNoiseFreq * vMC );
-    float angx = (nvx.r + nvx.g + nvx.b + nvx.a) - 2.0;   // [-2,+2]
+
+void
+main( )
+{
+    vec3 Normal = normalize( vNormal );        // remember to unitize this
+    vec3 Eye    = normalize( -vEyeDir );       // remember to unitize this
+
+    vec4 nvx = texture( Noise3, uNoiseFreq*vMC );
+    vec4 nvy = texture( Noise3, uNoiseFreq*vec3(vMC.xy,vMC.z+0.33) );
+    vec4 nvz = texture( Noise3, uNoiseFreq*vec3(vMC.xy,vMC.z+0.67) );
+
+    float angx = nvx.r + nvx.g + nvx.b + nvx.a;    //  1. -> 3.
+    angx = angx - 2.;                // -1. -> 1.
     angx *= uNoiseAmp;
 
-    vec4 nvy = texture( Noise3, uNoiseFreq * vec3(vMC.xy, vMC.z + 0.5) );
-    float angy = (nvy.r + nvy.g + nvy.b + nvy.a) - 2.0;   // [-2,+2]
+    float angy = nvy.r + nvy.g + nvy.b + nvy.a;    //  1. -> 3.
+    angy = angy - 2.;                // -1. -> 1.
     angy *= uNoiseAmp;
 
-    vec3 n = PerturbNormal2( angx, angy, vN );
-    n = normalize(  gl_NormalMatrix * n  );
+    float angz = nvz.r + nvz.g + nvz.b + nvz.a;    //  1. -> 3.
+    angz = angz - 2.;                // -1. -> 1.
+    angz *= uNoiseAmp;
 
-    // Lighting (eye space)
-    vec3 base   = OBJECTCOLOR;
-    vec3 Light  = normalize( vL );
-    vec3 Eye    = normalize( vE );
+    Normal = PerturbNormal3( angx, angy, angz, Normal );
+    Normal = normalize( gl_NormalMatrix * Normal );
 
-    vec3 ambient  = uKa * base;
-    float dd      = max( dot(n, Light), 0. );
-    vec3 diffuse  = uKd * dd * base;
+    vec3 reflectVector = reflect( -Eye, Normal );                 
+    vec3 reflectColor  = texture( uReflectUnit, reflectVector ).rgb;
 
-    float s = 0.;
-    if( dd > 0. )
+    vec3 refractVector = refract( -Eye, Normal, 1.0 / uEta );     
+
+    vec3 refractColor;
+    if( all( equal( refractVector, vec3(0.,0.,0.) ) ) )
     {
-        vec3 ref = normalize( reflect( -Light, n ) );
-        float cosphi = dot( Eye, ref );
-        if( cosphi > 0. )
-            s = pow( max( cosphi, 0. ), uShininess );
+        refractColor = reflectColor;
     }
-    vec3 specular = uKs * s * SPECULARCOLOR;
-    gl_FragColor  = vec4( ambient + diffuse + specular, 1. );
-
+    else
+    {
+        refractColor = texture( uRefractUnit, refractVector ).rgb;
+        refractColor = mix( refractColor, WHITE, uWhiteMix );
+    }
+    vec3 color = mix( reflectColor, refractColor, uMix );         
+    gl_FragColor = vec4(color, 1.);
 }
