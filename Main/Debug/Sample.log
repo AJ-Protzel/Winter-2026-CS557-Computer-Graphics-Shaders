@@ -1,34 +1,3 @@
 ﻿  sample.cpp
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(213,1): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(213,13): error C2146: syntax error: missing ';' before identifier 'Cube'
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(313,1): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(313,1): error C2086: 'int GLSLProgram': redefinition
-      C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(213,1):
-      see declaration of 'GLSLProgram'
-  
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(313,13): error C2146: syntax error: missing ';' before identifier 'Pattern'
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(514,2): error C2065: 'Cube': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(519,2): error C2065: 'Cube': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(528,2): error C2065: 'Cube': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(529,2): error C2065: 'Cube': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(532,2): error C2065: 'Cube': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(533,2): error C2065: 'Cube': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(534,2): error C2065: 'Cube': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(535,2): error C2065: 'Cube': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(536,2): error C2065: 'Cube': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(541,2): error C2065: 'Cube': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(800,2): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(801,15): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(809,2): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(811,2): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(812,2): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(813,2): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(814,2): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(815,2): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(816,2): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(817,2): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(818,2): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(819,2): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(821,2): error C2065: 'Pattern': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(828,2): error C2065: 'Cube': undeclared identifier
-C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\sample.cpp(829,12): error C2065: 'Cube': undeclared identifier
+sample.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+  Sample.vcxproj -> C:\School\Winter-2026-CS557-Computer-Graphics-Shaders\Main\Debug\Sample.exe

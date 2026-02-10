@@ -7,8 +7,16 @@
       "RelativeMoniker": "D:0:0:{3A18C8BB-2941-432F-8F8B-BEB51352D229}|Sample.vcxproj|solutionrelative:sample.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\texture.frag||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:texture.frag||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\pattern.frag||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:pattern.frag||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\texture.vert||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:texture.vert||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\pattern.vert||{8B382828-6202-11D1-8870-0000F87579D2}",
@@ -32,7 +40,7 @@
               "RelativeDocumentMoniker": "sample.cpp",
               "ToolTip": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\sample.cpp",
               "RelativeToolTip": "sample.cpp",
-              "ViewState": "AgIAAM0DAAAAAAAAAAAQwCEFAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAALcCAAAAAAAAAAAiwM0CAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-01-10T20:00:53.139Z",
               "IsPinned": true,
@@ -40,28 +48,54 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "pattern.vert",
               "DocumentMoniker": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\pattern.vert",
               "RelativeDocumentMoniker": "pattern.vert",
               "ToolTip": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\pattern.vert",
               "RelativeToolTip": "pattern.vert",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA0AAAAEAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2026-01-16T19:56:26.6Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
+              "Title": "texture.vert",
+              "DocumentMoniker": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\texture.vert",
+              "RelativeDocumentMoniker": "texture.vert",
+              "ToolTip": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\texture.vert",
+              "RelativeToolTip": "texture.vert",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-02-10T04:05:20.591Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "pattern.frag",
               "DocumentMoniker": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\pattern.frag",
               "RelativeDocumentMoniker": "pattern.frag",
               "ToolTip": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\pattern.frag",
               "RelativeToolTip": "pattern.frag",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADgAAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAADcAAAAAAAAAAAAQwFsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2026-01-16T19:56:24.315Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "texture.frag",
+              "DocumentMoniker": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\texture.frag",
+              "RelativeDocumentMoniker": "texture.frag",
+              "ToolTip": "C:\\School\\Winter-2026-CS557-Computer-Graphics-Shaders\\Main\\texture.frag",
+              "RelativeToolTip": "texture.frag",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-02-10T04:05:22.787Z",
               "EditorCaption": ""
             }
           ]

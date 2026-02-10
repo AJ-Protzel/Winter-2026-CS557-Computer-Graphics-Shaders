@@ -1,7 +1,5 @@
 
-ERROR: 0:18: 'vert' : undeclared identifier 
-ERROR: 0:18: 'scalar swizzle' : not supported for this version or the enabled extensions 
-ERROR: 0:18: '' : compilation terminated 
-ERROR: 3 compilation errors.  No code generated.
+ERROR: 0:93: '`' : unexpected token 
+ERROR: 1 compilation errors.  No code generated.
 
 
