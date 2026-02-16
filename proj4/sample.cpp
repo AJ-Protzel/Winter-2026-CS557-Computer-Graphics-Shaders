@@ -183,52 +183,44 @@ float	Time;					// used for animation, this has a value between 0. and 1.
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
 
-//float Ad = 0.05f;
-//float Bd = 0.05f;
-//float Tol = 0.05f;
+float Ad = 0.05f;
+float Bd = 0.05f;
+float Tol = 0.05f;
 
 
-//GLuint NoiseTex3D = 0;
-//GLuint DL;
+GLuint NoiseTex3D = 0;
+GLuint DL;
 
-//int		SphereList;
+int		SphereList;
 
-//float uA = 0.05f; // varied
-//float uP = 0.05f; // varied
-//float uKa = 0.05f;
-//float uKd = 0.05f;
-//float uKs = 0.05f;
+float uA = 0.05f; // varied
+float uP = 0.05f; // varied
+float uKa = 0.05f;
+float uKd = 0.05f;
+float uKs = 0.05f;
 //float uShininess = 0.05f;
-//float uLightX = 0.05f;
-//float uLightY = 0.05f;
-//float uLightZ = 0.05f;
+float uLightX = 0.05f;
+float uLightY = 0.05f;
+float uLightZ = 0.05f;
 //GLuint CurtainDL;
 
 GLuint CatHDL;
-//float Eta = 1.4f;   
-//float Mix = 0.0f; 
-//float NoiseAmp = 0.2f;     
-//float NoiseFreq = 0.10f;       
-//GLuint CubeName = 0;
-//char* FaceFiles[6] =
-//{
-//	(char*)"bmp_files/kec.posx.bmp",
-//	(char*)"bmp_files/kec.negx.bmp",
-//	(char*)"bmp_files/kec.posy.bmp",
-//	(char*)"bmp_files/kec.negy.bmp",
-//	(char*)"bmp_files/kec.posz.bmp",
-//	(char*)"bmp_files/kec.negz.bmp"
-//};
-//GLuint WallTex[6] = { 0 };
+float Eta = 1.4f;   
+float Mix = 0.0f; 
+float NoiseAmp = 0.2f;     
+float NoiseFreq = 0.10f;       
+GLuint CubeName = 0;
+char* FaceFiles[6] =
+{
+	(char*)"bmp_files/kec.posx.bmp",
+	(char*)"bmp_files/kec.negx.bmp",
+	(char*)"bmp_files/kec.posy.bmp",
+	(char*)"bmp_files/kec.negy.bmp",
+	(char*)"bmp_files/kec.posz.bmp",
+	(char*)"bmp_files/kec.negz.bmp"
+};
+GLuint WallTex[6] = { 0 };
 
-GLuint QuadDL;
-GLuint JinxTexture;
-float uSc = 0.0f;
-float uTc = 0.0f;
-float uRad = 0.0f;
-float uMag = 0.0f;
-float uWhirl = 0.0f;
-float uMosaic = 0.0f;
 
 
 // function prototypes:
@@ -442,71 +434,71 @@ Display()
 
 	// possibly draw the axes:
 
-	//if (AxesOn != 0)
-	//{
-	//	glColor3fv(&Colors[NowColor][0]);
-	//	glCallList(AxesList);
-	//}
+	if (AxesOn != 0)
+	{
+		glColor3fv(&Colors[NowColor][0]);
+		glCallList(AxesList);
+	}
 
 
-	//glEnable(GL_NORMALIZE);
+	glEnable(GL_NORMALIZE);
 
-	//glDepthMask(GL_FALSE);
-	//Wall.Use();
+	glDepthMask(GL_FALSE);
+	Wall.Use();
 
-	//glActiveTexture(GL_TEXTURE0);
-	//Wall.SetUniformVariable("TexUnit", 0);
+	glActiveTexture(GL_TEXTURE0);
+	Wall.SetUniformVariable("TexUnit", 0);
 
-	//glBindTexture(GL_TEXTURE_2D, WallTex[4]);    // +Z
-	//glBegin(GL_QUADS);
-	//glTexCoord2f(0, 0); glVertex3f(-5, -5, 5);
-	//glTexCoord2f(1, 0); glVertex3f(5, -5, 5);
-	//glTexCoord2f(1, 1); glVertex3f(5, 5, 5);
-	//glTexCoord2f(0, 1); glVertex3f(-5, 5, 5);
-	//glEnd();
+	glBindTexture(GL_TEXTURE_2D, WallTex[4]);    // +Z
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex3f(-5, -5, 5);
+	glTexCoord2f(1, 0); glVertex3f(5, -5, 5);
+	glTexCoord2f(1, 1); glVertex3f(5, 5, 5);
+	glTexCoord2f(0, 1); glVertex3f(-5, 5, 5);
+	glEnd();
 
-	//glBindTexture(GL_TEXTURE_2D, WallTex[5]);    // -Z
-	//glBegin(GL_QUADS);
-	//glTexCoord2f(0, 0); glVertex3f(5, -5, -5);
-	//glTexCoord2f(1, 0); glVertex3f(-5, -5, -5);
-	//glTexCoord2f(1, 1); glVertex3f(-5, 5, -5);
-	//glTexCoord2f(0, 1); glVertex3f(5, 5, -5);
-	//glEnd();
+	glBindTexture(GL_TEXTURE_2D, WallTex[5]);    // -Z
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex3f(5, -5, -5);
+	glTexCoord2f(1, 0); glVertex3f(-5, -5, -5);
+	glTexCoord2f(1, 1); glVertex3f(-5, 5, -5);
+	glTexCoord2f(0, 1); glVertex3f(5, 5, -5);
+	glEnd();
 
-	//glBindTexture(GL_TEXTURE_2D, WallTex[0]);    // +X
-	//glBegin(GL_QUADS);
-	//glTexCoord2f(0, 0); glVertex3f(5, -5, 5);
-	//glTexCoord2f(1, 0); glVertex3f(5, -5, -5);
-	//glTexCoord2f(1, 1); glVertex3f(5, 5, -5);
-	//glTexCoord2f(0, 1); glVertex3f(5, 5, 5);
-	//glEnd();
+	glBindTexture(GL_TEXTURE_2D, WallTex[0]);    // +X
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex3f(5, -5, 5);
+	glTexCoord2f(1, 0); glVertex3f(5, -5, -5);
+	glTexCoord2f(1, 1); glVertex3f(5, 5, -5);
+	glTexCoord2f(0, 1); glVertex3f(5, 5, 5);
+	glEnd();
 
-	//glBindTexture(GL_TEXTURE_2D, WallTex[1]);    // -X
-	//glBegin(GL_QUADS);
-	//glTexCoord2f(0, 0); glVertex3f(-5, -5, -5);
-	//glTexCoord2f(1, 0); glVertex3f(-5, -5, 5);
-	//glTexCoord2f(1, 1); glVertex3f(-5, 5, 5);
-	//glTexCoord2f(0, 1); glVertex3f(-5, 5, -5);
-	//glEnd();
+	glBindTexture(GL_TEXTURE_2D, WallTex[1]);    // -X
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex3f(-5, -5, -5);
+	glTexCoord2f(1, 0); glVertex3f(-5, -5, 5);
+	glTexCoord2f(1, 1); glVertex3f(-5, 5, 5);
+	glTexCoord2f(0, 1); glVertex3f(-5, 5, -5);
+	glEnd();
 
-	//glBindTexture(GL_TEXTURE_2D, WallTex[2]);    // +Y (ceiling)
-	//glBegin(GL_QUADS);
-	//glTexCoord2f(0, 0); glVertex3f(-5, 5, 5);
-	//glTexCoord2f(1, 0); glVertex3f(5, 5, 5);
-	//glTexCoord2f(1, 1); glVertex3f(5, 5, -5);
-	//glTexCoord2f(0, 1); glVertex3f(-5, 5, -5);
-	//glEnd();
+	glBindTexture(GL_TEXTURE_2D, WallTex[2]);    // +Y (ceiling)
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex3f(-5, 5, 5);
+	glTexCoord2f(1, 0); glVertex3f(5, 5, 5);
+	glTexCoord2f(1, 1); glVertex3f(5, 5, -5);
+	glTexCoord2f(0, 1); glVertex3f(-5, 5, -5);
+	glEnd();
 
-	//glBindTexture(GL_TEXTURE_2D, WallTex[3]);    // -Y (floor)
-	//glBegin(GL_QUADS);
-	//glTexCoord2f(0, 0); glVertex3f(-5, -5, -5);
-	//glTexCoord2f(1, 0); glVertex3f(5, -5, -5);
-	//glTexCoord2f(1, 1); glVertex3f(5, -5, 5);
-	//glTexCoord2f(0, 1); glVertex3f(-5, -5, 5);
-	//glEnd();
+	glBindTexture(GL_TEXTURE_2D, WallTex[3]);    // -Y (floor)
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex3f(-5, -5, -5);
+	glTexCoord2f(1, 0); glVertex3f(5, -5, -5);
+	glTexCoord2f(1, 1); glVertex3f(5, -5, 5);
+	glTexCoord2f(0, 1); glVertex3f(-5, -5, 5);
+	glEnd();
 
-	//Wall.UnUse();
-	//glDepthMask(GL_TRUE);
+	Wall.UnUse();
+	glDepthMask(GL_TRUE);
 
 	// draw the box object by calling up its display list:
 
@@ -515,39 +507,30 @@ Display()
 	// set the uniform variables that will change over time:
 
 
-	//const int NoiseUnit = 0;
-	//const int ReflectUnit = 5;
-	//const int RefractUnit = 6;
+	// --- your current shader bindings and uniforms for the object:
+	const int NoiseUnit = 0;
+	const int ReflectUnit = 5;
+	const int RefractUnit = 6;
 
-	//glActiveTexture(GL_TEXTURE0 + NoiseUnit);
-	//glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
-	//Pattern.SetUniformVariable((char*)"Noise3", NoiseUnit);
+	glActiveTexture(GL_TEXTURE0 + NoiseUnit);
+	glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
+	Pattern.SetUniformVariable((char*)"Noise3", NoiseUnit);
 
-	//glActiveTexture(GL_TEXTURE0 + ReflectUnit);
-	//glBindTexture(GL_TEXTURE_CUBE_MAP, CubeName);
+	glActiveTexture(GL_TEXTURE0 + ReflectUnit);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, CubeName);
 
-	//glActiveTexture(GL_TEXTURE0 + RefractUnit);
-	//glBindTexture(GL_TEXTURE_CUBE_MAP, CubeName);
+	glActiveTexture(GL_TEXTURE0 + RefractUnit);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, CubeName);
 
-	//Pattern.SetUniformVariable("uReflectUnit", ReflectUnit);
-	//Pattern.SetUniformVariable("uRefractUnit", RefractUnit);
-	//Pattern.SetUniformVariable("uMix", Mix);
-	//Pattern.SetUniformVariable("uEta", Eta);
-	//Pattern.SetUniformVariable("uNoiseAmp", NoiseAmp);
-	//Pattern.SetUniformVariable("uNoiseFreq", NoiseFreq);
-	//Pattern.SetUniformVariable("uWhiteMix", 0.2f);
+	Pattern.SetUniformVariable("uReflectUnit", ReflectUnit);
+	Pattern.SetUniformVariable("uRefractUnit", RefractUnit);
+	Pattern.SetUniformVariable("uMix", Mix);
+	Pattern.SetUniformVariable("uEta", Eta);
+	Pattern.SetUniformVariable("uNoiseAmp", NoiseAmp);
+	Pattern.SetUniformVariable("uNoiseFreq", NoiseFreq);
+	Pattern.SetUniformVariable("uWhiteMix", 0.2f);
 
-
-
-	if (JinxTexture != 0) {
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, JinxTexture);
-	}
-	glColor3f(1.f, 1.f, 1.f);
-
-
-	/*glCallList(CatHDL);*/
-	glCallList(QuadDL);
+	glCallList(CatHDL);
 
 	Pattern.UnUse();    
 
@@ -749,118 +732,98 @@ InitGraphics()
 	fprintf(stderr, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 #endif
 
-	//Pattern.Init();
-	//bool valid = Pattern.Create((char*)"pattern.vert", (char*)"pattern.frag");
-	//if (!valid)
-	//	fprintf(stderr, "Could not create the Pattern shader!\n");
-	//else
-	//	fprintf(stderr, "Pattern shader created!\n");
+	Pattern.Init();
+	bool valid = Pattern.Create((char*)"pattern.vert", (char*)"pattern.frag");
+	if (!valid)
+		fprintf(stderr, "Could not create the Pattern shader!\n");
+	else
+		fprintf(stderr, "Pattern shader created!\n");
 
-	//glGenTextures(1, &CubeName);
-	//glBindTexture(GL_TEXTURE_CUBE_MAP, CubeName);
-	//glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_REPEAT);
-	//glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glGenTextures(1, &CubeName);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, CubeName);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	//for (int file = 0; file < 6; file++)
-	//{
-	//	int nums = 0, numt = 0;
-	//	unsigned char* texture2d = BmpToTexture(FaceFiles[file], &nums, &numt);
-	//	if (texture2d == NULL)
-	//		fprintf(stderr, "Could not open BMP 2D texture '%s'", FaceFiles[file]);
-	//	else
-	//		fprintf(stderr, "BMP 2D texture '%s' read -- nums = %d, numt = %d\n", FaceFiles[file], nums, numt);
+	for (int file = 0; file < 6; file++)
+	{
+		int nums = 0, numt = 0;
+		unsigned char* texture2d = BmpToTexture(FaceFiles[file], &nums, &numt);
+		if (texture2d == NULL)
+			fprintf(stderr, "Could not open BMP 2D texture '%s'", FaceFiles[file]);
+		else
+			fprintf(stderr, "BMP 2D texture '%s' read -- nums = %d, numt = %d\n", FaceFiles[file], nums, numt);
 
-	//	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + file, 0, 3, nums, numt, 0,
-	//		GL_RGB, GL_UNSIGNED_BYTE, texture2d);
-	//	delete[] texture2d;
-	//}
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + file, 0, 3, nums, numt, 0,
+			GL_RGB, GL_UNSIGNED_BYTE, texture2d);
+		delete[] texture2d;
+	}
 
-	//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-	//const int W = 32, H = 32, D = 32;
-	//std::vector<unsigned char> data(W * H * D * 4);
+	const int W = 32, H = 32, D = 32;
+	std::vector<unsigned char> data(W * H * D * 4);
 
-	//auto h8 = [](int x, int y, int z)->unsigned char {
-	//	unsigned int n = (unsigned int)(x * 73856093) ^ (unsigned int)(y * 19349663) ^ (unsigned int)(z * 83492791);
-	//	n ^= (n >> 13); n *= 1274126177u; n ^= (n >> 16);
-	//	return (unsigned char)(n & 0xFF);
-	//	};
+	auto h8 = [](int x, int y, int z)->unsigned char {
+		unsigned int n = (unsigned int)(x * 73856093) ^ (unsigned int)(y * 19349663) ^ (unsigned int)(z * 83492791);
+		n ^= (n >> 13); n *= 1274126177u; n ^= (n >> 16);
+		return (unsigned char)(n & 0xFF);
+		};
 
-	//for (int z = 0; z < D; ++z)
-	//	for (int y = 0; y < H; ++y)
-	//		for (int x = 0; x < W; ++x) {
-	//			const int i = ((z * H + y) * W + x) * 4;
-	//			data[i + 0] = h8(x, y, z);                   // octave 0
-	//			data[i + 1] = h8(x >> 1, y >> 1, z >> 1);    // octave 1
-	//			data[i + 2] = h8(x >> 2, y >> 2, z >> 2);    // octave 2
-	//			data[i + 3] = h8(x >> 3, y >> 3, z >> 3);    // octave 3
-	//		}
+	for (int z = 0; z < D; ++z)
+		for (int y = 0; y < H; ++y)
+			for (int x = 0; x < W; ++x) {
+				const int i = ((z * H + y) * W + x) * 4;
+				data[i + 0] = h8(x, y, z);                   // octave 0
+				data[i + 1] = h8(x >> 1, y >> 1, z >> 1);    // octave 1
+				data[i + 2] = h8(x >> 2, y >> 2, z >> 2);    // octave 2
+				data[i + 3] = h8(x >> 3, y >> 3, z >> 3);    // octave 3
+			}
 
-	////glGenTextures(1, &NoiseTex3D);
-	////glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
-	////glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	////glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	////glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	////glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	////glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+	glGenTextures(1, &NoiseTex3D);
+	glBindTexture(GL_TEXTURE_3D, NoiseTex3D);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 
-	//glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, W, H, D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, W, H, D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 
-	//GLint w = 0, h = 0, d = 0;
-	//glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_WIDTH, &w);
-	//glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_HEIGHT, &h);
-	//glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_DEPTH, &d);
-	//printf("3D noise uploaded: %dx%dx%d\n", w, h, d);
-
-
+	GLint w = 0, h = 0, d = 0;
+	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_WIDTH, &w);
+	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_HEIGHT, &h);
+	glGetTexLevelParameteriv(GL_TEXTURE_3D, 0, GL_TEXTURE_DEPTH, &d);
+	printf("3D noise uploaded: %dx%dx%d\n", w, h, d);
 
 
 
 
-	//Wall.Init();
-	//if (!Wall.Create("texture.vert", "texture.frag"))
-	//	fprintf(stderr, "Could not create the Wall shader!\n");
-
-	//glGenTextures(6, WallTex);
-	//for (int i = 0; i < 6; i++) {
-	//	int w, h;
-	//	unsigned char* pixels = BmpToTexture(FaceFiles[i], &w, &h);
-	//	if (!pixels) {
-	//		fprintf(stderr, "Wall texture load failed: %s\n", FaceFiles[i]);
-	//		continue;
-	//	}
-	//	glBindTexture(GL_TEXTURE_2D, WallTex[i]);
-	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0,
-	//		GL_RGB, GL_UNSIGNED_BYTE, pixels);
-	//	delete[] pixels;
-	//}
 
 
+	Wall.Init();
+	if (!Wall.Create("texture.vert", "texture.frag"))
+		fprintf(stderr, "Could not create the Wall shader!\n");
 
-
-	
-	int tw = 0, th = 0;
-	unsigned char* pixels = BmpToTexture((char*)"bmp_files/jinx_2.bmp", &tw, &th);
-
-	glGenTextures(1, &JinxTexture);
-	glBindTexture(GL_TEXTURE_2D, JinxTexture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tw, th, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-
+	glGenTextures(6, WallTex);
+	for (int i = 0; i < 6; i++) {
+		int w, h;
+		unsigned char* pixels = BmpToTexture(FaceFiles[i], &w, &h);
+		if (!pixels) {
+			fprintf(stderr, "Wall texture load failed: %s\n", FaceFiles[i]);
+			continue;
+		}
+		glBindTexture(GL_TEXTURE_2D, WallTex[i]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0,
+			GL_RGB, GL_UNSIGNED_BYTE, pixels);
+		delete[] pixels;
+	}
 }
 
 
@@ -873,28 +836,13 @@ InitLists( )
 	glutSetWindow( MainWindow );
 
 	// create the object:
-	// 
-	//CatHDL = glGenLists(1);
-	//glNewList(CatHDL, GL_COMPILE);
-	//glPushMatrix();
-	//glTranslatef(0.f, -2.f, 0.f);
-	//LoadObjFile("obj_files/catH.obj");
-	//glPopMatrix();
-	//glEndList();
-
-
-	QuadDL = glGenLists(1);
-	glNewList(QuadDL, GL_COMPILE);
-	glBegin(GL_QUADS);
-
-	glTexCoord2f(0.f, 0.f); glVertex3f(-1.2f, -1.5f, 0.f);  // bottom-left
-	glTexCoord2f(1.f, 0.f); glVertex3f(1.2f, -1.5f, 0.f);  // bottom-right
-	glTexCoord2f(1.f, 1.f); glVertex3f(1.2f, 1.5f, 0.f);  // top-right
-	glTexCoord2f(0.f, 1.f); glVertex3f(-1.2f, 1.5f, 0.f);  // top-left
-
-	glEnd();
+	CatHDL = glGenLists(1);
+	glNewList(CatHDL, GL_COMPILE);
+	glPushMatrix();
+	glTranslatef(0.f, -2.f, 0.f);
+	LoadObjFile("obj_files/catH.obj");
+	glPopMatrix();
 	glEndList();
-
 
 
 	// create the axes:
@@ -950,14 +898,14 @@ Keyboard( unsigned char c, int x, int y )
 			DoMainMenu( QUIT );	// will not return here
 			break;				// happy compiler
 
-		//case '0': NoiseAmp = clamp(NoiseAmp - STEP, 0.0f, 1.0f); break;
-		//case ')': NoiseAmp = clamp(NoiseAmp + STEP, 0.0f, 1.0f); break;
+		case '0': NoiseAmp = clamp(NoiseAmp - STEP, 0.0f, 1.0f); break;
+		case ')': NoiseAmp = clamp(NoiseAmp + STEP, 0.0f, 1.0f); break;
 
-		//case '9': NoiseFreq = clamp(NoiseFreq - STEP, 0.0f, 1.0f); break;
-		//case '(': NoiseFreq = clamp(NoiseFreq + STEP, 0.0f, 1.0f); break;
+		case '9': NoiseFreq = clamp(NoiseFreq - STEP, 0.0f, 1.0f); break;
+		case '(': NoiseFreq = clamp(NoiseFreq + STEP, 0.0f, 1.0f); break;
 
-		//case '1': Mix = clamp(Mix - STEP, 0.0f, 1.0f); break;
-		//case '!': Mix = clamp(Mix + STEP, 0.0f, 1.0f); break;
+		case '1': Mix = clamp(Mix - STEP, 0.0f, 1.0f); break;
+		case '!': Mix = clamp(Mix + STEP, 0.0f, 1.0f); break;
 
 		default:
 			fprintf( stderr, "Don't know what to do with keyboard hit: '%c' (0x%0x)\n", c, c );
