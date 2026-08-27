@@ -1,2 +1,23 @@
-School/Winter-2026-CS557-Computer-Graphics-Shaders/Main/
-/Main
+# Visual Studio build output and user state
+.vs/
+[Dd]ebug/
+[Rr]elease/
+*.obj
+*.pdb
+*.ilk
+*.idb
+*.exe
+*.tlog
+*.suo
+*.ncb
+*.sdf
+*.opt
+*.plg
+*.user
+*.VC.db
+*.aps
+*.lastbuildstate
+
+# Course harness logs
+errorlog.txt
+glsllog.txt
